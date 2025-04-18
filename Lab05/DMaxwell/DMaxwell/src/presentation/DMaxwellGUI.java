@@ -148,6 +148,5 @@ public class DMaxwellGUI extends JFrame {
     public static void main(String[] args) {
         DMaxwellGUI gui = new DMaxwellGUI();
         gui.setVisible(true);
-        System.out.println("Hola");
     }
 }
