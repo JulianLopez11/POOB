@@ -1,0 +1,28 @@
+#BlueJ class context
+comment0.target=Rectangle
+comment0.text=\r\n\ A\ rectangle\ that\ can\ be\ manipulated\ and\ that\ draws\ itself\ on\ a\ canvas.\r\n\ \r\n\ @author\ \ Michael\ Kolling\ and\ David\ J.\ Barnes\ (Modified)\r\n\ @version\ 1.0\ \ (15\ July\ 2000)()\r\n
+comment1.params=
+comment1.target=Rectangle()
+comment1.text=\r\n\ Create\ a\ new\ rectangle\ at\ default\ position\ with\ default\ color.\r\n
+comment2.params=px\ py\ newHeight\ newWidth
+comment2.target=Rectangle(int,\ int,\ int,\ int)
+comment2.text=\r\n\ Create\ a\ new\ rectangle\ at\ default\ position\ and\ new\ height\ and\ widht.\r\n\ @param\ horizontal\ position\r\n\ @param\ vertical\ position\r\n\ @param\ newHeight\ of\ the\ rectangle\r\n\ @param\ newWidht\ of\ the\ rectangle\r\n
+comment3.params=
+comment3.target=int\ getWidth()
+comment3.text=\r\n\ Get\ the\ widht\ position\ of\ the\ rectangle\r\n
+comment4.params=
+comment4.target=int\ getHeight()
+comment4.text=\r\n\ get\ the\ height\ position\ of\ the\ rectangle\r\n
+comment5.params=newHeight\ newWidth
+comment5.target=void\ changeSize(int,\ int)
+comment5.text=\r\n\ Change\ the\ size\ to\ the\ new\ size\r\n\ @param\ newHeight\ the\ new\ height\ in\ pixels.\ newHeight\ must\ be\ >\=0.\r\n\ @param\ newWidht\ the\ new\ width\ in\ pixels.\ newWidth\ must\ be\ >\=0.\r\n
+comment6.params=yPosition
+comment6.target=void\ setYPosition(int)
+comment6.text=\r\n\ Change\ the\ position\ y\ of\ the\ rectangle\r\n\ @param\ the\ yPosition\r\n
+comment7.params=
+comment7.target=void\ draw()
+comment7.text=\r\n\ Draw\ the\ rectangle\ with\ current\ specifications\ on\ screen.\r\n
+comment8.params=
+comment8.target=void\ erase()
+comment8.text=\r\n\ Erase\ the\ rectangle\ on\ screen.\r\n
+numComments=9
