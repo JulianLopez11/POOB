@@ -1,3 +1,5 @@
+package presentation;
+import domain.maxwell; // or whatever the class name is
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
