@@ -3,11 +3,17 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
+
 public class DMaxwellGUI extends JFrame {
 
+    private JMenuItem restartItem;
+    private JMenuItem openItem;
+    private JMenuItem saveItem;
+    private JMenuItem exitItem;
+
     public DMaxwellGUI() {
-        prepareActions();
         prepareElements();
+        prepareActions();
     }
 
     public void prepareActions() {
@@ -24,6 +30,7 @@ public class DMaxwellGUI extends JFrame {
                 }
             }
         });
+        prepareActionMenu();
     }
 
     public void prepareElements() {
@@ -32,22 +39,44 @@ public class DMaxwellGUI extends JFrame {
         int width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         setSize(width * 1 / 4, height * 1 / 4);
         setLocationRelativeTo(null);
-        prepareMenuElements();
-        prepareMainPanel();
+        
+        prepareElementsBoard();
+        prepareElementsMenu();
     }
-    public void prepareMenuElements() {
+
+    private void prepareElementsBoard(){
+        setLayout(new BorderLayout());
+        JPanel maxPanel = new JPanel();
+        maxPanel.setLayout(new FlowLayout());
+        JButton up = new JButton("UP");
+        JButton down = new JButton("DOWN");
+        JButton right = new JButton("LEFT");
+        JButton left = new JButton("RIGHT");
+        JButton start = new JButton("START");
+        maxPanel.add(start);
+        maxPanel.add(up);
+        maxPanel.add(down);
+        maxPanel.add(left);
+        maxPanel.add(right);
+        add(maxPanel,BorderLayout.SOUTH);    
+    }
+
+    private void prepareElementsMenu() {
         JMenuBar classicMenu = new JMenuBar();
         JMenu fileMenu = new JMenu("Archivo");
-        JMenuItem newItem = new JMenuItem("Nuevo");
-        JMenuItem openItem = new JMenuItem("Abrir");
-        JMenuItem saveItem = new JMenuItem("Salvar");
-        JMenuItem exitItem = new JMenuItem("Salir");
-        fileMenu.add(newItem);
+        restartItem = new JMenuItem("Reiniciar");
+        openItem = new JMenuItem("Abrir");
+        saveItem = new JMenuItem("Salvar");
+        exitItem = new JMenuItem("Salir");
+        fileMenu.add(restartItem);
         fileMenu.add(openItem);
         fileMenu.add(saveItem);
         fileMenu.add(exitItem);
         classicMenu.add(fileMenu);
         setJMenuBar(classicMenu);
+    }
+
+    private void prepareActionMenu(){
         //Abrir Oyente
         openItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -84,67 +113,11 @@ public class DMaxwellGUI extends JFrame {
             }
         });
     }
-    public void prepareMenuActions(){
-        /*exitItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
-                JDialog dialog = optionPane.createDialog(DMaxwellGUI.this, "Confirmar Salida");
-                dialog.setVisible(true);
-                if (optionPane.getValue().equals(JOptionPane.YES_OPTION)) {
-                    System.exit(0); 
-                }
-            }
-        }); */
-    }
-    public void prepareMainPanel() {
-        
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
-    
-        JLabel title = new JLabel("Maxwell's Demon");
-        title.setFont(new Font("Serif", Font.BOLD, 30));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
-        //Botones
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0)); 
 
-        //Jugar
-        JButton playButton = new JButton("Jugar");
-        //Oyente Boton Jugar
-        playButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JFrame gameWindow = new JFrame("Juego - Maxwell's Demon");
-                gameWindow.setSize(DMaxwellGUI.this.getSize());  
-                gameWindow.setLocationRelativeTo(DMaxwellGUI.this);  
-                gameWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);  
-                gameWindow.setVisible(true);  
-            }
-        });
+    private void refresh(){
+        
+}
 
-        //Salir
-        JButton exitButton = new JButton("Salir");
-        //Oyente Boton Salir
-        exitButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE, 
-                JOptionPane.YES_NO_OPTION);
-                JDialog dialog = optionPane.createDialog(DMaxwellGUI.this, "Confirmar Salida");
-                dialog.setVisible(true);
-                if (optionPane.getValue().equals(JOptionPane.YES_OPTION)) {
-                    System.exit(0);
-                }
-            }
-        });
-        buttonPanel.add(playButton);
-        buttonPanel.add(exitButton);
-        mainPanel.add(title);
-        mainPanel.add(Box.createVerticalStrut(40));
-        mainPanel.add(buttonPanel);
-        add(mainPanel);
-    }
-    
     public static void main(String[] args) {
         DMaxwellGUI gui = new DMaxwellGUI();
         gui.setVisible(true);
