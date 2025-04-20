@@ -2,12 +2,17 @@ package presentation;
 import domain.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Color.*;
 import java.awt.event.*;
 import java.io.File;
 
 
 public class DMaxwellGUI extends JFrame {
+    private JButton up;
+    private JButton down;
+    private JButton right;
+    private JButton left;
+    private JButton start;
+    private DMaxwell maxwell;
     private Particle[][] board;
     private JMenuItem restartItem;
     private JMenuItem openItem;
@@ -33,7 +38,39 @@ public class DMaxwellGUI extends JFrame {
                 }
             }
         });
+        //Oyente Boton Subir
+        up.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                maxwell.moveNorth();
+            }
+        });
+        //Oyente Boton Bajar
+        down.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                maxwell.moveSouth();
+            }
+        });
+        //Oyente Boton Izquierda
+        left.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                maxwell.moveWest();
+            }
+        });
+        //Oyente Boton Derecha
+        right.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                maxwell.moveEast();
+            }
+        });
+        //Oyente Boton Iniciar
+        start.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //maxwell.container();
+            }
+        });
         prepareActionMenu();
+
+        
     }
 
     public void prepareElements() {
