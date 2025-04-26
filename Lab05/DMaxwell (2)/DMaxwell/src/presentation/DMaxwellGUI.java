@@ -22,9 +22,9 @@ public class DMaxwellGUI extends JFrame {
     private JMenuItem saveItem;
     private JMenuItem exitItem;
     private JMenuItem newItem;
-    private JMenuItem cambiarColorRojasItem;
-    private JMenuItem cambiarColorAzulesItem;
-    private JMenuItem reiniciarItem;
+    private JMenuItem changeColorRedItem;
+    private JMenuItem changeColorBluesItem;
+    private JMenuItem resetItem;
 
     public DMaxwellGUI() {
         maxwell = new DMaxwell();
@@ -119,15 +119,15 @@ public class DMaxwellGUI extends JFrame {
         exitItem = new JMenuItem("Exit");
         newItem = new JMenuItem("New");
 
-        cambiarColorRojasItem = new JMenuItem("Change Color Red Particles");
-        cambiarColorAzulesItem = new JMenuItem("Change Color Blue Particles");
-        reiniciarItem = new JMenuItem("Reset");
+        changeColorRedItem = new JMenuItem("Change Color Red Particles");
+        changeColorBluesItem = new JMenuItem("Change Color Blue Particles");
+        resetItem = new JMenuItem("Reset");
         //Opciones
-        opciones.add(cambiarColorRojasItem);
+        opciones.add(changeColorRedItem);
         opciones.addSeparator();
-        opciones.add(cambiarColorAzulesItem);
+        opciones.add(changeColorBluesItem);
         opciones.addSeparator();
-        opciones.add(reiniciarItem);
+        opciones.add(resetItem);
         //MenuAñadir
         fileMenu.add(newItem);
         fileMenu.addSeparator();
@@ -172,6 +172,24 @@ public class DMaxwellGUI extends JFrame {
                 //Botones
                 buttonsPanelAtributtes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
                 acceptButton = new JButton("Accept");
+                acceptButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        int newHeight = Integer.parseInt(heightField.getText());
+                        int newWidth = Integer.parseInt(widthField.getText());
+                        int newBlue = Integer.parseInt(blueField.getText());
+                        int newRed = Integer.parseInt(redField.getText());
+                        int newHole = Integer.parseInt(holesField.getText());
+                
+                        DMaxwell dMaxwell = new DMaxwell(newHeight, newWidth, newBlue, newRed, newHole);
+                        remove(board); 
+                        Maxwell boardX = new Maxwell(dMaxwell.container()); 
+                        add(boardX, 0); 
+                        attributesFrame.dispose();
+                        revalidate(); 
+                        repaint();
+                    }
+                });
+            
                 exitButton = new JButton("Exit");
                 //Salir Boton
                 exitButton.addActionListener(new ActionListener() {
@@ -223,7 +241,7 @@ public class DMaxwellGUI extends JFrame {
             }
         });
         //Cambiar Color Rojas Oyente
-        cambiarColorRojasItem.addActionListener(new ActionListener() {
+        changeColorRedItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Rojas", Maxwell.color1);
                 if (updateColor != null) {
@@ -234,7 +252,7 @@ public class DMaxwellGUI extends JFrame {
             }
         });
         //Cambiar Color Azules Oyente
-        cambiarColorAzulesItem.addActionListener(new ActionListener() {
+        changeColorBluesItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Azules", Maxwell.color2);
                 if (updateColor != null) {
@@ -244,9 +262,22 @@ public class DMaxwellGUI extends JFrame {
                 }
             }
         });
+        //Reiniciar Oyente BONO
+        resetItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                DMaxwell newDMaxwell = new DMaxwell();
+                remove(board);
+                board = new Maxwell(newDMaxwell.container());
+                add(board,0);
+                revalidate();
+                refresh();
+
+            }
+        });
     }
+
     private void refresh(){
-        board.repaint();
+        this.repaint();
     }
     public static void main(String[] args) {
         DMaxwellGUI gui = new DMaxwellGUI();

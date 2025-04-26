@@ -72,6 +72,7 @@ public class Maxwell extends JPanel {
     }
 
     public void rePainComponents(){
+
         for (int num:blueParticles){
             Panel.getComponent(num).setBackground(color2);
         }
@@ -91,5 +92,5 @@ public class Maxwell extends JPanel {
         }
     }
     }
-
+    
 }
