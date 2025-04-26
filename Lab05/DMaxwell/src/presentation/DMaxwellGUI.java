@@ -171,7 +171,6 @@ public class DMaxwellGUI extends JFrame {
             board = new Maxwell(h,w,maxwell.container());
             add(board,0);
             refresh();
-
         }
 
     }

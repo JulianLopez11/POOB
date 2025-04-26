@@ -2,6 +2,13 @@ package domain;
 import java.util.*;
 public class DMaxwell {
     
+    private int h;
+    private int w;
+    private int r;
+    private int b;
+    private int o;
+    private int demon ;
+
     private final int posDemonDefault = 225;
     private final int[] paredDefault = {20,61,102,143,184,225,266,307,348,389,430};
     private final int[] blueDefault = {43,52,139,254,291,343,67,201,228,310};
@@ -11,7 +18,7 @@ public class DMaxwell {
     private int[] reds;
     private int[] holes;
     private int[] wall;
-    private int demon ;
+
     
 
 
@@ -23,57 +30,64 @@ public class DMaxwell {
         demon = posDemonDefault;
     }
     public DMaxwell(int height, int width, int numBlue, int numRed, int numHoles) {
-        int totalCols = (2 * width) + 1;
-        int totalCells = height * totalCols;
-        Random rand = new Random();
-        Set<Integer> used = new HashSet<>();
-        
-        // generar muro en el centro
-        wall = new int[totalCols];
-        int centerRow = height / 2;
-        for (int i = 0; i < wall.length; i++) {
-            wall[i] = centerRow * totalCols + i;
-            used.add(wall[i]);
+        h = height;
+        w = width+1;
+        r = numRed;
+        b = numBlue;
+        o = numHoles;
+        checkMidWall(h, w);
+        createNewPositions();
+    }
+    
+    private void createNewPositions() {
+        Random random = new Random();
+        ArrayList<Integer> wall1 = arrayToArrayList(wall);
+        ArrayList<Integer> disponibles = new ArrayList<>();
+
+        for (int i = 0; i < h * w; i++) {
+            if (!wall1.contains(i) && i != demon) {
+                disponibles.add(i);
+            }
         }
     
-        // posición del demonio al centro de la pared
-        demon = centerRow * totalCols + width;
+        Collections.shuffle(disponibles, random);
+
+        blues = new int[b];
+        reds = new int[r];
+        holes = new int[o];
     
-        // asegurar que el demonio esté libre
-        used.add(demon);
-    
-        // generar azules
-        blues = new int[numBlue];
-        for (int i = 0; i < numBlue; i++) {
-            int pos;
-            do {
-                pos = rand.nextInt(totalCells);
-            } while (!used.add(pos));
-            blues[i] = pos;
+        int index = 0;
+        for (int i = 0; i < b; i++) {
+            blues[i] = disponibles.get(index++);
         }
-    
-        // generar rojas
-        reds = new int[numRed];
-        for (int i = 0; i < numRed; i++) {
-            int pos;
-            do {
-                pos = rand.nextInt(totalCells);
-            } while (!used.add(pos));
-            reds[i] = pos;
+        for (int i = 0; i < r; i++) {
+            reds[i] = disponibles.get(index++);
         }
-    
-        // generar agujeros
-        holes = new int[numHoles];
-        for (int i = 0; i < numHoles; i++) {
-            int pos;
-            do {
-                pos = rand.nextInt(totalCells);
-            } while (!used.add(pos));
-            holes[i] = pos;
+        for (int i = 0; i < o; i++) {
+            holes[i] = disponibles.get(index++);
         }
     }
     
+
+    private void checkMidWall(int h, int wi) {
+        int widthBoard = (wi - 1) / 2;
+        int salto = (2 * widthBoard) + 1;
+        wall = new int[h];
+        int inicio = widthBoard;
+        for (int fila = 0; fila < h; fila++) {
+            wall[fila] = inicio + fila * salto;
+        }
+        demon = wall[h / 2];
+    }
     
+
+    public static ArrayList<Integer> arrayToArrayList(int[] arreglo) {
+        ArrayList<Integer> lista = new ArrayList<>();
+        for (int num : arreglo) {
+            lista.add(num);
+        }
+        return lista;
+    }
 
     public int[] consult(){
         int[] particles = new int[5];
