@@ -95,7 +95,7 @@ public class Maxwell extends JPanel {
             }
         }
     }
-    
+                
     public void resetColors(){
         color1 = Color.RED;
         color2 = Color.BLUE;

@@ -10,7 +10,7 @@ public class DMaxwell {
     private int demon ;
 
     private final int posDemonDefault = 225;
-    private final int[] paredDefault = {20,61,102,143,184,225,266,307,348,389,430};
+    private final int[] wallDefault = {20,61,102,143,184,225,266,307,348,389,430};
     private final int[] blueDefault = {43,52,139,254,291,343,67,201,228,310};
     private final int[] redDefault = {48,55,126,336,79,112,193,277,326,360};
     private final int[] defaultHoles = {116,129,175,288,356,364};
@@ -26,7 +26,7 @@ public class DMaxwell {
         blues = blueDefault.clone();
         reds = redDefault.clone();
         holes = defaultHoles.clone();
-        wall = paredDefault.clone();
+        wall = wallDefault.clone();
         demon = posDemonDefault;
     }
     public DMaxwell(int height, int width, int numBlue, int numRed, int numHoles) {
@@ -81,9 +81,9 @@ public class DMaxwell {
     }
     
 
-    public static ArrayList<Integer> arrayToArrayList(int[] arreglo) {
+    public static ArrayList<Integer> arrayToArrayList(int[] array) {
         ArrayList<Integer> lista = new ArrayList<>();
-        for (int num : arreglo) {
+        for (int num : array) {
             lista.add(num);
         }
         return lista;
