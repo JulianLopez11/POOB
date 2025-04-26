@@ -182,8 +182,8 @@ public class DMaxwellGUI extends JFrame {
                 
                         DMaxwell dMaxwell = new DMaxwell(newHeight, newWidth, newBlue, newRed, newHole);
                         remove(board); 
-                        Maxwell boardX = new Maxwell(dMaxwell.container()); 
-                        add(boardX, 0); 
+                        board = new Maxwell(dMaxwell.container()); 
+                        add(board, 0); 
                         attributesFrame.dispose();
                         revalidate(); 
                         repaint();
