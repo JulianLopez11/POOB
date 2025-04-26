@@ -12,9 +12,11 @@ public class DMaxwell {
     private  int[] holes;
     private int[] wall;
     private int demon ;
+    private int height;
+    private int width;
     
 
-
+    
     public DMaxwell(){
         blues = blueDefault.clone();
         red = redDefault.clone();
@@ -31,6 +33,10 @@ public class DMaxwell {
     public int[][] container(){
         return new int[][] { blues, red, holes, wall};
     }
+
+    
+
+    
 
 
 }
