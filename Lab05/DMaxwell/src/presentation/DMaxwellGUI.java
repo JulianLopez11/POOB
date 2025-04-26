@@ -160,21 +160,17 @@ public class DMaxwellGUI extends JFrame {
         int option = JOptionPane.showConfirmDialog(null,dataField,
             "Data Field",JOptionPane.OK_CANCEL_OPTION);
         if(option == 0){
-            
             int h = Integer.parseInt(heightField.getText());
             int w = Integer.parseInt(widthField.getText());
             int r = Integer.parseInt(redField.getText());
             int b = Integer.parseInt(blueField.getText());
             int o = Integer.parseInt(holesField.getText());
-            refresh();
             maxwell = new DMaxwell(h,2*w,r,b,o);
-            refresh();
             remove(board);
-            refresh();
             board = new Maxwell(h,w,maxwell.container());
-            refresh();
             add(board,0);
             refresh();
+            SwingUtilities.updateComponentTreeUI(this);
         }
 
     }
@@ -296,6 +292,7 @@ public class DMaxwellGUI extends JFrame {
         refresh();
     }
     private void refresh(){
+        revalidate();
         repaint();
     }
     public static void main(String[] args) {
