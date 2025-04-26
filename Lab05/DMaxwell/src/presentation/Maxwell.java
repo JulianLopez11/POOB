@@ -19,9 +19,9 @@ public class Maxwell extends JPanel {
     private  int[] blueParticles;
     private  int[] midWall;
 
-    public Maxwell(int newH, int newW,int [][] info ){
+    public Maxwell(int newH, int newW,int [][] data ){
         this(newH,newW);
-        setVariables(info);
+        setVariables(data);
         paintComponents();
     }
 
@@ -34,31 +34,31 @@ public class Maxwell extends JPanel {
         prepareElements();
     }
 
-    public Maxwell(int[][] info){
+    public Maxwell(int[][] data){
         this(11,20);
-        setVariables(info);
+        setVariables(data);
         paintComponents();
     }
 
-    private void setVariables(int[][] info){
-        blueParticles = info[0];
-        redParticles = info[1];
-        holes = info[2];
-        midWall = info[3];
+    private void setVariables(int[][] data){
+        blueParticles = data[0];
+        redParticles = data[1];
+        holes = data[2];
+        midWall = data[3];
     }
 
     private void prepareElements(){
         Panel = new JPanel(new GridLayout(height, (2*width)+1));
         for (int i = 0; i < height * ((2*width)+1); i++) {
-            JPanel celd = new JPanel();
-            Panel.add(celd);
+            JPanel celda = new JPanel();
+            Panel.add(celda);
         }
         Panel.setBorder(getBorder());
         add(Panel);
     }
 
     public void paintComponents(){
-        paintCenter();
+        paintMidWall();
         for (int num:blueParticles){
             Panel.getComponent(num).setBackground(color2);
         }
@@ -82,15 +82,18 @@ public class Maxwell extends JPanel {
 
     }
 
-    private void paintCenter() {
-    int centerIndex = (height / 2) * (2 * width + 1) + width;
-    for (int i : midWall) {
-        if (i == centerIndex) {
-            Panel.getComponent(i).setBackground(Color.GRAY); 
-        } else {
-            Panel.getComponent(i).setBackground(Color.BLACK); 
+    private void paintMidWall() {
+        int totalCells = height * (2 * width + 1);
+        int centerIndex = (height / 2) * (2 * width + 1) + width;
+        for (int i : midWall) {
+            if (i >= 0 && i < totalCells) {
+                if (i == centerIndex) {
+                    Panel.getComponent(i).setBackground(Color.GRAY); 
+                } else {
+                    Panel.getComponent(i).setBackground(Color.BLACK); 
+                }
+            }
         }
-    }
     }
     
     public void resetColors(){

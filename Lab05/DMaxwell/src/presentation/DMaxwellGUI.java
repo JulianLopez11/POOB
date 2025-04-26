@@ -10,14 +10,12 @@ public class DMaxwellGUI extends JFrame {
     private DMaxwell maxwell;
     private int height;
     private int width;
-    private JFrame attributesFrame;
-    private JPanel buttonsPanelAtributtes;
+  
     private JButton upButton;
     private JButton downButton;
     private JButton rightButton;
     private JButton leftButton;
-    private JButton acceptButton;
-    private JButton exitButton;
+   
     private JMenuItem openItem;
     private JMenuItem saveItem;
     private JMenuItem exitItem;
@@ -34,16 +32,11 @@ public class DMaxwellGUI extends JFrame {
 
     private void prepareActions() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
         //Boton Salir Ventana OYENTE
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE, 
-                JOptionPane.YES_NO_OPTION);
-                JDialog dialog = optionPane.createDialog(DMaxwellGUI.this, "Confirmar Salida");
-                dialog.setVisible(true);
-                if (optionPane.getValue().equals(JOptionPane.YES_OPTION)) {
-                    System.exit(0);  
-                }
+                closeWindow();
             }
         });
         /*/Oyente Boton Subir
@@ -92,7 +85,7 @@ public class DMaxwellGUI extends JFrame {
         board = new Maxwell(maxwell.container());
         add(board);
 
-        JPanel south = new JPanel(new FlowLayout(FlowLayout.CENTER,20,20));
+        JPanel south = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         JPanel maxPanel = new JPanel(new BorderLayout());
         upButton = new JButton("↑");
@@ -141,144 +134,166 @@ public class DMaxwellGUI extends JFrame {
         setJMenuBar(classicMenu);
     }
 
+    private void newDataMaxwell(){
+        JPanel dataField = new JPanel();
+        JLabel height = new JLabel("Height: ");
+        JLabel width = new JLabel("Width: ");
+        JLabel reds = new JLabel("Reds: ");
+        JLabel blues = new JLabel("Blues: ");
+        JLabel holes = new JLabel("Holes: ");
+        JTextField heightField = new JTextField();
+        JTextField widthField = new JTextField();
+        JTextField redField = new JTextField();
+        JTextField blueField = new JTextField();
+        JTextField holesField = new JTextField();
+        dataField.setLayout(new GridLayout(5,2));
+        dataField.add(height);
+        dataField.add(heightField);
+        dataField.add(width);
+        dataField.add(widthField);
+        dataField.add(reds);
+        dataField.add(redField);
+        dataField.add(blues);
+        dataField.add(blueField);
+        dataField.add(holes);
+        dataField.add(holesField);
+        int option = JOptionPane.showConfirmDialog(null,dataField,
+            "Data Field",JOptionPane.OK_CANCEL_OPTION);
+        if(option == 0){
+            int h = Integer.parseInt(heightField.getText());
+            int w = Integer.parseInt(widthField.getText());
+            int r = Integer.parseInt(redField.getText());
+            int b = Integer.parseInt(blueField.getText());
+            int o = Integer.parseInt(holesField.getText());
+
+            maxwell = new DMaxwell(h,2*w,r,b,o);
+            remove(board);
+            board = new Maxwell(h,w,maxwell.container());
+            add(board,0);
+            refresh();
+
+        }
+
+    }
+
+    
+
     private void prepareActionMenu(){
 
         //Nuevo Oyente
         newItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //Ventana
-                attributesFrame = new JFrame("Ingresar Atributos Nuevo Tablero");
-                attributesFrame.setSize(width * 1 / 4, height * 1 / 4);
-                attributesFrame.setLocationRelativeTo(null);
-                attributesFrame.setLayout(new BorderLayout());
-                //Inputs Medidas
-                JPanel inputs = new JPanel(new GridLayout(5, 2, 10, 10));
-                inputs.add(new JLabel("Height:"));
-                JTextField heightField = new JTextField();
-                inputs.add(heightField);
-                inputs.add(new JLabel("Width:"));
-                JTextField widthField = new JTextField();
-                inputs.add(widthField);
-                inputs.add(new JLabel("Blues:"));
-                JTextField blueField = new JTextField();
-                inputs.add(blueField);
-                inputs.add(new JLabel("Reds:"));
-                JTextField redField = new JTextField();
-                inputs.add(redField);
-                inputs.add(new JLabel("Holes:"));
-                JTextField holesField= new JTextField();
-                inputs.add(holesField);
-                attributesFrame.add(inputs,BorderLayout.CENTER);
-                //Botones
-                buttonsPanelAtributtes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-                acceptButton = new JButton("Accept");
-                acceptButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        int newHeight = Integer.parseInt(heightField.getText());
-                        int newWidth = Integer.parseInt(widthField.getText());
-                        int newBlue = Integer.parseInt(blueField.getText());
-                        int newRed = Integer.parseInt(redField.getText());
-                        int newHole = Integer.parseInt(holesField.getText());
-                
-                        DMaxwell dMaxwell = new DMaxwell(newHeight, newWidth, newBlue, newRed, newHole);
-                        remove(board); 
-                        board = new Maxwell(dMaxwell.container()); 
-                        add(board, 0); 
-                        attributesFrame.dispose();
-                        revalidate(); 
-                        repaint();
-                    }
-                });
-            
-                exitButton = new JButton("Exit");
-                //Salir Boton
-                exitButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        attributesFrame.dispose();
-                    }
-                });
-                buttonsPanelAtributtes.add(acceptButton);
-                buttonsPanelAtributtes.add(exitButton);  
-                attributesFrame.add(buttonsPanelAtributtes, BorderLayout.SOUTH);
-                attributesFrame.setVisible(true);
+                newDataMaxwell(); 
             }
         });
 
         //Abrir Oyente
         openItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                if (fileChooser.showOpenDialog(DMaxwellGUI.this) == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    JOptionPane.showMessageDialog(DMaxwellGUI.this,"Funcionando" + " " + selectedFile.getName(),"Abrir archivo",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
+                openItems();
             }
         });
 
         //Salvar Oyente
         saveItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                if (fileChooser.showSaveDialog(DMaxwellGUI.this) == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    JOptionPane.showMessageDialog(DMaxwellGUI.this,"Funcionando" + " " + selectedFile.getName(),"Salvar archivo",
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
+                saveItems();
             }
         });
 
         //Salir Oyente
         exitItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", 
-                JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
-                JDialog dialog = optionPane.createDialog(DMaxwellGUI.this, "Confirmar Salida");
-                dialog.setVisible(true);
-                if (optionPane.getValue().equals(JOptionPane.YES_OPTION)) {
-                    System.exit(0); 
-                }
+                exit();
             }
         });
         //Cambiar Color Rojas Oyente
         changeColorRedItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Rojas", Maxwell.color1);
-                if (updateColor != null) {
-                    Maxwell.color1 = updateColor;
-                    board.rePainComponents();
-                    refresh();
-                }
+                changeColorReds();
             }
         });
         //Cambiar Color Azules Oyente
         changeColorBluesItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Azules", Maxwell.color2);
-                if (updateColor != null) {
-                    Maxwell.color2 = updateColor;
-                    board.rePainComponents(); 
-                    refresh();
-                }
+                changeColorBlues();
             }
         });
         //Reiniciar Oyente BONO
         resetItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                DMaxwell newDMaxwell = new DMaxwell();
-                remove(board);
-                board.resetColors();
-                board = new Maxwell(newDMaxwell.container());
-                add(board,0);
-                revalidate();
-                refresh();
+                resetToDefaultBoard();
 
             }
         });
     }
 
+    private void closeWindow(){
+        JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE, 
+        JOptionPane.YES_NO_OPTION);
+        JDialog dialog = optionPane.createDialog(DMaxwellGUI.this, "Confirmar Salida");
+        dialog.setVisible(true);
+        if (optionPane.getValue().equals(JOptionPane.YES_OPTION)) {
+            System.exit(0);  
+        }
+    }
+
+    private void openItems(){
+        JFileChooser fileChooser = new JFileChooser();
+        if (fileChooser.showOpenDialog(DMaxwellGUI.this) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            JOptionPane.showMessageDialog(DMaxwellGUI.this,"Funcionando" + " " + selectedFile.getName(),"Abrir archivo",
+            JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void saveItems(){
+        JFileChooser fileChooser = new JFileChooser();
+        if (fileChooser.showSaveDialog(DMaxwellGUI.this) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            JOptionPane.showMessageDialog(DMaxwellGUI.this,"Funcionando" + " " + selectedFile.getName(),"Salvar archivo",
+            JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void exit(){
+        JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", 
+        JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
+        JDialog dialog = optionPane.createDialog(DMaxwellGUI.this, "Confirmar Salida");
+        dialog.setVisible(true);
+        if (optionPane.getValue().equals(JOptionPane.YES_OPTION)) {
+            System.exit(0); 
+        }
+    }
+
+    private void changeColorReds(){
+        Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Rojas", Maxwell.color1);
+        if (updateColor != null) {
+            Maxwell.color1 = updateColor;
+            board.rePainComponents();
+            refresh();
+        }
+    }
+
+    private void changeColorBlues(){
+        Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Azules", Maxwell.color2);
+        if (updateColor != null) {
+            Maxwell.color2 = updateColor;
+            board.rePainComponents(); 
+            refresh();
+        }
+    }
+    private void resetToDefaultBoard(){
+        DMaxwell newDMaxwell = new DMaxwell();
+        remove(board);
+        board.resetColors();
+        board = new Maxwell(newDMaxwell.container());
+        add(board,0);
+        revalidate();
+        refresh();
+    }
     private void refresh(){
-        this.repaint();
+        repaint();
     }
     public static void main(String[] args) {
         DMaxwellGUI gui = new DMaxwellGUI();
