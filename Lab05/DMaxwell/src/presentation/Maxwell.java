@@ -18,7 +18,6 @@ public class Maxwell extends JPanel {
     private  int[] redParticles;
     private  int[] blueParticles;
     private  int[] midWall;
-    private int[] perras;
 
     public Maxwell(int newH, int newW,int [][] info ){
         this(newH,newW);
@@ -94,4 +93,8 @@ public class Maxwell extends JPanel {
     }
     }
     
+    public void resetColors(){
+        color1 = Color.RED;
+        color2 = Color.BLUE;
+    }
 }

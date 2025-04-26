@@ -1,9 +1,9 @@
 package presentation;
 import domain.*;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import javax.swing.*;
 
 public class DMaxwellGUI extends JFrame {
     private Maxwell board;
@@ -267,6 +267,7 @@ public class DMaxwellGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 DMaxwell newDMaxwell = new DMaxwell();
                 remove(board);
+                board.resetColors();
                 board = new Maxwell(newDMaxwell.container());
                 add(board,0);
                 revalidate();
