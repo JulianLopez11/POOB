@@ -21,7 +21,7 @@ public class Maxwell extends JPanel {
 
     public Maxwell(int newH, int newW,int [][] data ){
         this(newH,newW);
-        setVariables(data);
+        setData(data);
         paintComponents();
     }
 
@@ -36,11 +36,11 @@ public class Maxwell extends JPanel {
 
     public Maxwell(int[][] data){
         this(11,20);
-        setVariables(data);
+        setData(data);
         paintComponents();
     }
 
-    private void setVariables(int[][] data){
+    private void setData(int[][] data){
         blueParticles = data[0];
         redParticles = data[1];
         holes = data[2];
@@ -71,16 +71,26 @@ public class Maxwell extends JPanel {
         
     }
 
-    public void rePainComponents(){
+    public void rePaintComponents() {
+        for (int i = 0; i < Panel.getComponentCount(); i++) {
+            Panel.getComponent(i).setBackground(Color.WHITE);
+        }
 
-        for (int num:blueParticles){
+        paintMidWall();
+    
+        for (int num : blueParticles) {
             Panel.getComponent(num).setBackground(color2);
         }
-        for(int num:redParticles){
+
+        for (int num : redParticles) {
             Panel.getComponent(num).setBackground(color1);
         }
 
+        for (int num : holes) {
+            Panel.getComponent(num).setBackground(HOLE);
+        }
     }
+    
 
     private void paintMidWall() {
         int totalCells = height * (2 * width + 1);
@@ -95,7 +105,25 @@ public class Maxwell extends JPanel {
             }
         }
     }
-                
+    
+    private void setBackground() {
+        Component[] componentesDer = Panel.getComponents();
+        for (int i = 0; i < componentesDer.length; i++) {
+            componentesDer[i].setBackground(Color.WHITE);
+        }
+    }
+    public void refresh(int[][] info){
+        setBackground();
+        setData(info);
+        paintMidWall();
+        paintComponents();
+        Panel.revalidate();
+        Panel.repaint();
+        revalidate();
+        repaint();
+
+    }
+
     public void resetColors(){
         color1 = Color.RED;
         color2 = Color.BLUE;

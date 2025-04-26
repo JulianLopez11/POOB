@@ -39,31 +39,31 @@ public class DMaxwellGUI extends JFrame {
                 closeWindow();
             }
         });
-        /*/Oyente Boton Subir
-        up.addActionListener(new ActionListener() {
+        //Oyente Boton Subir
+        upButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                maxwell.moveNorth();
+                movement('u');
             }
         });
         //Oyente Boton Bajar
-        down.addActionListener(new ActionListener() {
+        downButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                maxwell.moveSouth();
+                movement('d');
             }
         });
         //Oyente Boton Izquierda
-        left.addActionListener(new ActionListener() {
+        leftButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                maxwell.moveWest();
+                movement('l');
             }
         });
         //Oyente Boton Derecha
-        right.addActionListener(new ActionListener() {
+        rightButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                maxwell.moveEast();
+                movement('r');
             }
         });
-        */
+        
         prepareActionMenu();
 
         
@@ -159,7 +159,8 @@ public class DMaxwellGUI extends JFrame {
         dataField.add(holesField);
         int option = JOptionPane.showConfirmDialog(null,dataField,
             "Data Field",JOptionPane.OK_CANCEL_OPTION);
-        if(option == 0){
+        if(option == 0){}
+        try{
             int h = Integer.parseInt(heightField.getText());
             int w = Integer.parseInt(widthField.getText());
             int r = Integer.parseInt(redField.getText());
@@ -171,11 +172,15 @@ public class DMaxwellGUI extends JFrame {
             add(board,0);
             refresh();
             SwingUtilities.updateComponentTreeUI(this);
+        
+        }catch(DMaxwellExceptions e){
+            if (e.getMessage().equals(DMaxwellExceptions.ONLY_POSITIVE_DIMENTIONS)) {
+                JOptionPane.showMessageDialog(this, e.getMessage(), "Error De Tipo", JOptionPane.ERROR_MESSAGE);
+            }
+        }catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(this,"Tipos Invalidos", "Error De Tipo", JOptionPane.ERROR_MESSAGE);
         }
-
     }
-
-    
 
     private void prepareActionMenu(){
 
@@ -269,7 +274,7 @@ public class DMaxwellGUI extends JFrame {
         Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Rojas", Maxwell.color1);
         if (updateColor != null) {
             Maxwell.color1 = updateColor;
-            board.rePainComponents();
+            board.rePaintComponents();
             refresh();
         }
     }
@@ -278,23 +283,32 @@ public class DMaxwellGUI extends JFrame {
         Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Azules", Maxwell.color2);
         if (updateColor != null) {
             Maxwell.color2 = updateColor;
-            board.rePainComponents(); 
+            board.rePaintComponents(); 
             refresh();
         }
     }
     private void resetToDefaultBoard(){
-        DMaxwell newDMaxwell = new DMaxwell();
+        maxwell = new DMaxwell();
         remove(board);
         board.resetColors();
-        board = new Maxwell(newDMaxwell.container());
+        board = new Maxwell(maxwell.container());
         add(board,0);
         revalidate();
         refresh();
     }
     private void refresh(){
-        revalidate();
+        board.refresh(maxwell.container());
         repaint();
     }
+
+    private void movement(char direction) {
+        maxwell.move(direction); 
+        refresh();
+    }
+    
+    
+
+
     public static void main(String[] args) {
         DMaxwellGUI gui = new DMaxwellGUI();
         gui.pack();
