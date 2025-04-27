@@ -19,6 +19,7 @@ public class DMaxwell {
     private int[] reds;
     private int[] holes;
     private int[] wall;
+    private int particlesInHoles;
 
     /*
      * Constructor DMaxwell
@@ -31,6 +32,7 @@ public class DMaxwell {
         holes = defaultHoles.clone();
         wall = wallDefault.clone();
         demon = posDemonDefault;
+        particlesInHoles = 0;
     }
 
     /*
@@ -95,6 +97,7 @@ public class DMaxwell {
     
         blues = removePositions(blues1);
         reds = removePositions(reds1);
+        
     }
     
 
@@ -268,5 +271,4 @@ public class DMaxwell {
         }
         return false;
     }
-    
 }

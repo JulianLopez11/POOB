@@ -23,6 +23,8 @@ public class DMaxwellGUI extends JFrame {
     private JMenuItem changeColorRedItem;
     private JMenuItem changeColorBluesItem;
     private JMenuItem resetItem;
+    private JPanel textPanel;
+    private JLabel label;
     /*
      * Constructor
      */
@@ -67,17 +69,6 @@ public class DMaxwellGUI extends JFrame {
                 movement('r');
             }
         });
-
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e){
-                if(e.getKeyChar() == 'w') movement('u');
-                if (e.getKeyChar() == 's') movement('d');
-                if (e.getKeyChar() == 'd') movement('r');
-                if (e.getKeyChar() == 'a') movement('l');
-            }
-        });
-        
         prepareActionMenu();
 
         
@@ -94,41 +85,49 @@ public class DMaxwellGUI extends JFrame {
         prepareElementsBoard();
         prepareElementsMenu();
     }
+
+    private void updateTextPanel() {
+        int[][] containerData = maxwell.container();
+        int blueParticles = containerData[0].length;
+        int redParticles = containerData[1].length;
+        int holes = containerData[2].length;
+        label.setText("Particulas Rojas: " + redParticles + " -- " +
+                      "Particulas Azules: " + blueParticles + " -- " +
+                      "Huecos: " + holes);
+        refresh();
+    }
+    
+
     /*
      * Prepare The elements of the board
      */
-    private void prepareElementsBoard(){
-        setLayout(new GridLayout(3,1));
+    private void prepareElementsBoard() {
+        setLayout(new GridLayout(3, 1));
         board = new Maxwell(maxwell.container());
         add(board);
-        JPanel textPanel = new JPanel();
+        textPanel = new JPanel();
         textPanel.setBackground(Color.BLACK);
-        JLabel label = new JLabel("Particulas 🔴"+ maxwell.container()[0][1] + " -- " +
-	                               "Particulas 🔵: " + maxwell.container()[0][0] + " -- " +
-	                               "Huecos:" + maxwell.container()[0][2] + " -- " +
-	                               "Particulas en huecos:" + maxwell.container()[0][3] + " -- " );
-	    label.setFont(new Font("Arial", Font.BOLD, 16));
-	    label.setForeground(Color.WHITE);
+        label = new JLabel();
+        label.setFont(new Font("Times New Roman", Font.BOLD, 15));
+        label.setForeground(Color.WHITE);
+        updateTextPanel();
         textPanel.add(label);
         add(textPanel);
 
-
         JPanel south = new JPanel(new FlowLayout(FlowLayout.CENTER));
-
         JPanel maxPanel = new JPanel(new BorderLayout());
         upButton = new JButton("↑");
         downButton = new JButton("↓");
         rightButton = new JButton("→");
         leftButton = new JButton("←");
-
-        maxPanel.add(upButton,BorderLayout.NORTH);
-        maxPanel.add(downButton,BorderLayout.SOUTH);
-        maxPanel.add(leftButton,BorderLayout.WEST);
-        maxPanel.add(rightButton,BorderLayout.EAST);
+    
+        maxPanel.add(upButton, BorderLayout.NORTH);
+        maxPanel.add(downButton, BorderLayout.SOUTH);
+        maxPanel.add(leftButton, BorderLayout.WEST);
+        maxPanel.add(rightButton, BorderLayout.EAST);
         south.add(maxPanel);
-        
+    
         add(south);
-        
     }
     /*
      * Prepare the elements of the menu
@@ -204,6 +203,7 @@ public class DMaxwellGUI extends JFrame {
             add(board,0);
             refresh();
             SwingUtilities.updateComponentTreeUI(this);
+            updateTextPanel();
         
         }catch(DMaxwellExceptions e){
             if (e.getMessage().equals(DMaxwellExceptions.ONLY_POSITIVE_DIMENTIONS)) {
@@ -340,6 +340,7 @@ public class DMaxwellGUI extends JFrame {
         board.resetColors();
         board = new Maxwell(maxwell.container());
         add(board,0);
+        updateTextPanel();
         revalidate();
         refresh();
     }

@@ -49,4 +49,52 @@ public class DMaxwellTest {
         int[] movedReds = dMaxwell.container()[1];
         assertNotEquals(initialReds[0], movedReds[0], "First red particle should have moved");
     }
+
+    @Test
+    void testMoveUp() {
+        int[] initialBlues = dMaxwell.container()[0].clone();
+        int[] initialReds = dMaxwell.container()[1].clone();
+        
+        // Realiza el movimiento hacia arriba
+        dMaxwell.move('u');
+        
+        int[] movedBlues = dMaxwell.container()[0];
+        int[] movedReds = dMaxwell.container()[1];
+        
+        // Verifica que las posiciones de las partículas azules y rojas hayan cambiado correctamente
+        assertNotEquals(initialBlues[0], movedBlues[0]);
+        assertNotEquals(initialReds[0], movedReds[0]);
+    }
+
+    @Test
+    void testMoveRight() {
+        int[] initialBlues = dMaxwell.container()[0].clone();
+        int[] initialReds = dMaxwell.container()[1].clone();
+        
+        // Realiza el movimiento hacia la derecha
+        dMaxwell.move('r');
+        
+        int[] movedBlues = dMaxwell.container()[0];
+        int[] movedReds = dMaxwell.container()[1];
+        
+        // Verifica que las posiciones de las partículas azules y rojas hayan cambiado correctamente
+        assertNotEquals(initialBlues[0], movedBlues[0]);
+        assertNotEquals(initialReds[0], movedReds[0]);
+    }
+
+    @Test
+    void testMoveLeft() {
+        int[] initialBlues = dMaxwell.container()[0].clone();
+        int[] initialReds = dMaxwell.container()[1].clone();
+        
+        // Realiza el movimiento hacia la izquierda
+        dMaxwell.move('l');
+        
+        int[] movedBlues = dMaxwell.container()[0];
+        int[] movedReds = dMaxwell.container()[1];
+        
+        // Verifica que las posiciones de las partículas azules y rojas hayan cambiado correctamente
+        assertNotEquals(initialBlues[0], movedBlues[0]);
+        assertNotEquals(initialReds[0], movedReds[0]);
+    }
 }
