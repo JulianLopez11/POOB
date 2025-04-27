@@ -23,13 +23,17 @@ public class DMaxwellGUI extends JFrame {
     private JMenuItem changeColorRedItem;
     private JMenuItem changeColorBluesItem;
     private JMenuItem resetItem;
-
+    /*
+     * Constructor
+     */
     public DMaxwellGUI() {
         maxwell = new DMaxwell();
         prepareElements();
         prepareActions();
     }
-
+    /*
+     * Prepare All the general actions
+     */
     private void prepareActions() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -68,7 +72,9 @@ public class DMaxwellGUI extends JFrame {
 
         
     }
-
+    /*
+     * Prepare the main elements
+     */
     private void prepareElements() {
         setTitle("Maxwell Discreto");
         height = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -79,7 +85,9 @@ public class DMaxwellGUI extends JFrame {
         prepareElementsBoard();
         prepareElementsMenu();
     }
-
+    /*
+     * Prepare The elements of the board
+     */
     private void prepareElementsBoard(){
         setLayout(new GridLayout(2,1));
         board = new Maxwell(maxwell.container());
@@ -102,7 +110,9 @@ public class DMaxwellGUI extends JFrame {
         add(south);
         
     }
-
+    /*
+     * Prepare the elements of the menu
+     */
     private void prepareElementsMenu() {
         JMenuBar classicMenu = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
@@ -133,7 +143,9 @@ public class DMaxwellGUI extends JFrame {
         classicMenu.add(opciones);
         setJMenuBar(classicMenu);
     }
-
+    /**
+     * New Data of new Container
+     */
     private void newDataMaxwell(){
         JPanel dataField = new JPanel();
         JLabel height = new JLabel("Height: ");
@@ -181,7 +193,9 @@ public class DMaxwellGUI extends JFrame {
             JOptionPane.showMessageDialog(this,"Tipos Invalidos", "Error De Tipo", JOptionPane.ERROR_MESSAGE);
         }
     }
-
+    /*
+     * Prepare the actions of the menu
+     */
     private void prepareActionMenu(){
 
         //Nuevo Oyente
@@ -231,7 +245,9 @@ public class DMaxwellGUI extends JFrame {
             }
         });
     }
-
+    /*
+     *Method to close a window 
+     */
     private void closeWindow(){
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE, 
         JOptionPane.YES_NO_OPTION);
@@ -250,7 +266,9 @@ public class DMaxwellGUI extends JFrame {
             JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
+    /*
+     * Methos to do the showSaveDiaglog
+     */
     private void saveItems(){
         JFileChooser fileChooser = new JFileChooser();
         if (fileChooser.showSaveDialog(DMaxwellGUI.this) == JFileChooser.APPROVE_OPTION) {
@@ -259,7 +277,9 @@ public class DMaxwellGUI extends JFrame {
             JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
+    /*
+     *Method to do the exit of a panel
+     */
     private void exit(){
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", 
         JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
@@ -269,7 +289,9 @@ public class DMaxwellGUI extends JFrame {
             System.exit(0); 
         }
     }
-
+    /*
+     *Method to change the color of the red particles 
+     */
     private void changeColorReds(){
         Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Rojas", Maxwell.color1);
         if (updateColor != null) {
@@ -278,7 +300,9 @@ public class DMaxwellGUI extends JFrame {
             refresh();
         }
     }
-
+    /*
+     *Method to change the color of the blue particles 
+     */
     private void changeColorBlues(){
         Color updateColor = JColorChooser.showDialog(DMaxwellGUI.this, "Selecciona Color Particulas Azules", Maxwell.color2);
         if (updateColor != null) {
@@ -287,6 +311,9 @@ public class DMaxwellGUI extends JFrame {
             refresh();
         }
     }
+    /**
+     * Method to reset the board to the default
+     */
     private void resetToDefaultBoard(){
         maxwell = new DMaxwell();
         remove(board);
@@ -296,11 +323,18 @@ public class DMaxwellGUI extends JFrame {
         revalidate();
         refresh();
     }
+    /**
+     * Refresh the method
+     */
     private void refresh(){
         board.refresh(maxwell.container());
         repaint();
     }
 
+    /*
+     *Movement Of the particles 
+     * @param direction
+     */
     private void movement(char direction) {
         maxwell.move(direction); 
         refresh();
