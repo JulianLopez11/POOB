@@ -52,6 +52,7 @@ public class DMaxwellTest {
 
     @Test
     void testMoveUp() {
+        DMaxwell dMaxwell = new DMaxwell();
         int[] initialBlues = dMaxwell.container()[0].clone();
         int[] initialReds = dMaxwell.container()[1].clone();
         
@@ -68,6 +69,7 @@ public class DMaxwellTest {
 
     @Test
     void testMoveRight() {
+        DMaxwell dMaxwell = new DMaxwell();
         int[] initialBlues = dMaxwell.container()[0].clone();
         int[] initialReds = dMaxwell.container()[1].clone();
         
@@ -84,6 +86,7 @@ public class DMaxwellTest {
 
     @Test
     void testMoveLeft() {
+        DMaxwell dMaxwell = new DMaxwell();
         int[] initialBlues = dMaxwell.container()[0].clone();
         int[] initialReds = dMaxwell.container()[1].clone();
         
