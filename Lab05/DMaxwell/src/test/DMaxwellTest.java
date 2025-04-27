@@ -38,4 +38,15 @@ public class DMaxwellTest {
         assertFalse(dMaxwell.verifyHole(holes[0]));
         assertTrue(dMaxwell.verifyHole(0)); 
     }
+ 
+    @Test
+    public void testMoveDown() {
+        DMaxwell dMaxwell = new DMaxwell();
+        int[] initialReds = dMaxwell.container()[1].clone();
+        
+        dMaxwell.move('d');
+        
+        int[] movedReds = dMaxwell.container()[1];
+        assertNotEquals(initialReds[0], movedReds[0], "First red particle should have moved");
+    }
 }

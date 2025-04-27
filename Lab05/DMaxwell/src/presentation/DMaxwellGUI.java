@@ -67,6 +67,16 @@ public class DMaxwellGUI extends JFrame {
                 movement('r');
             }
         });
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e){
+                if(e.getKeyChar() == 'w') movement('u');
+                if (e.getKeyChar() == 's') movement('d');
+                if (e.getKeyChar() == 'd') movement('r');
+                if (e.getKeyChar() == 'a') movement('l');
+            }
+        });
         
         prepareActionMenu();
 
@@ -81,7 +91,6 @@ public class DMaxwellGUI extends JFrame {
         width = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         setSize(width * 1 / 4, height * 1 / 4);
         setLocationRelativeTo(null);
-
         prepareElementsBoard();
         prepareElementsMenu();
     }
@@ -89,9 +98,20 @@ public class DMaxwellGUI extends JFrame {
      * Prepare The elements of the board
      */
     private void prepareElementsBoard(){
-        setLayout(new GridLayout(2,1));
+        setLayout(new GridLayout(3,1));
         board = new Maxwell(maxwell.container());
         add(board);
+        JPanel textPanel = new JPanel();
+        textPanel.setBackground(Color.BLACK);
+        JLabel label = new JLabel("Particulas 🔴"+ maxwell.container()[0][1] + " -- " +
+	                               "Particulas 🔵: " + maxwell.container()[0][0] + " -- " +
+	                               "Huecos:" + maxwell.container()[0][2] + " -- " +
+	                               "Particulas en huecos:" + maxwell.container()[0][3] + " -- " );
+	    label.setFont(new Font("Arial", Font.BOLD, 16));
+	    label.setForeground(Color.WHITE);
+        textPanel.add(label);
+        add(textPanel);
+
 
         JPanel south = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
