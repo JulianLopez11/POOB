@@ -2,11 +2,11 @@ package domain;
 import java.util.*;
 public class DMaxwell {
 
-    private int h;
-    private int w;
-    private int r;
-    private int b;
-    private int o;
+    private int h = 11;
+    private int w = 41;
+    private int r = 10;
+    private int b = 10;
+    private int o = 6;
     private int demon;
 
     private final int posDemonDefault = 225;
@@ -31,8 +31,6 @@ public class DMaxwell {
         holes = defaultHoles.clone();
         wall = wallDefault.clone();
         demon = posDemonDefault;
-        h = 11;
-        w = 11;
     }
 
     /*
@@ -66,26 +64,39 @@ public class DMaxwell {
     public void move(char direction) {
         int[] blues1 = blues.clone();
         int[] reds1 = reds.clone();
+        
+        ArrayList<Integer> ocupados = new ArrayList<>();
+        for (int pos : blues1) ocupados.add(pos);
+        for (int pos : reds1) ocupados.add(pos);
+    
 
         for (int i = 0; i < blues1.length; i++) {
-            int pos = positions(blues1[i], direction);
+            ocupados.remove((Integer) blues1[i]); 
+            int pos = positions(blues1[i], direction, ocupados);
             if (verifyHole(pos)) {
                 blues1[i] = pos;
+                ocupados.add(pos); 
             } else {
                 blues1[i] = -1;
             }
         }
+    
+
         for (int i = 0; i < reds1.length; i++) {
-            int pos = positions(reds1[i], direction);
+            ocupados.remove((Integer) reds1[i]); 
+            int pos = positions(reds1[i], direction, ocupados);
             if (verifyHole(pos)) {
                 reds1[i] = pos;
+                ocupados.add(pos); 
             } else {
                 reds1[i] = -1;
             }
         }
+    
         blues = removePositions(blues1);
         reds = removePositions(reds1);
     }
+    
 
     /*
      * Method to change particle positions based on movement direction.
@@ -93,62 +104,49 @@ public class DMaxwell {
      * @param direccion The direction to move the particle ('u', 'd', 'r', 'l').
      * @return The new position of the particle after movement.
      */
-    private int positions(int num, char direccion) {
+    private int positions(int num, char direccion, ArrayList<Integer> ocupados) {
         int col = num % w;
-
+    
         if (num < 0 || num >= h * w) {
             return num;
         }
+    
+        int newNum = num;
+    
         if (direccion == 'u') {
-            for (int i : wall) {
-                if (i == num - w) {
-                    return num;
+            if (num >= w) {
+                int target = num - w;
+                if ((!contains(wall, target) || target == demon) && !ocupados.contains(target)) {
+                    newNum = target;
                 }
             }
-            if (num < w) {
-                return num;
-            }
-            return num - w;
-        }
-
-        if (direccion == 'd') {
-            for (int i : wall) {
-                if (i == num + w) {
-                    return num;
+        } else if (direccion == 'd') {
+            if (num < (h - 1) * w) {
+                int target = num + w;
+                if ((!contains(wall, target) || target == demon) && !ocupados.contains(target)) {
+                    newNum = target;
                 }
             }
-            if (num >= (h - 1) * w) {
-                return num;
-            }
-            return num + w;
-        }
-
-        if (direccion == 'r') {
-            for (int i : wall) {
-                if (num + 1 == i && i != demon) {
-                    return num;
+        } else if (direccion == 'r') {
+            if ((col + 1) < w) {
+                int target = num + 1;
+                if ((!contains(wall, target) || target == demon) && !ocupados.contains(target)) {
+                    newNum = target;
                 }
             }
-            if ((num + 1) % w == 0) {
-                return num;
-            }
-            return num + 1;
-        }
-
-        if (direccion == 'l') {
-            for (int i : wall) {
-                if (num - 1 == i && i != demon) {
-                    return num;
+        } else if (direccion == 'l') {
+            if (col > 0) {
+                int target = num - 1;
+                if ((!contains(wall, target) || target == demon) && !ocupados.contains(target)) {
+                    newNum = target;
                 }
             }
-            if (col == 0) {
-                return num;
-            }
-            return num - 1;
         }
-
-        return num;
+    
+        return newNum;
     }
+    
+    
 
     /*
      * Method to remove invalid positions 
@@ -263,4 +261,12 @@ public class DMaxwell {
     public int[][] container() {
         return new int[][] { blues, reds, holes, wall };
     }
+
+    private boolean contains(int[] array, int value) {
+        for (int i : array) {
+            if (i == value) return true;
+        }
+        return false;
+    }
+    
 }
