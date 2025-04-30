@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class HomeScreenPanel extends JPanel {
-    private JLabel titulo;
+    //private JLabel titulo;
     private JButton playButton;
     private JButton exitButton;
     private Image backgroundImage;
@@ -16,12 +16,12 @@ public class HomeScreenPanel extends JPanel {
     private void prepareElements() {
         setLayout(new BorderLayout());
 
-        titulo = new JLabel("¡Bienvenido a POOBkemon!");
-        titulo.setHorizontalAlignment(SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 50));
-        titulo.setForeground(Color.BLACK);
-        titulo.setOpaque(false);
-        add(titulo, BorderLayout.CENTER);
+//        titulo = new JLabel("¡Bienvenido a POOBkemon!");
+//        titulo.setHorizontalAlignment(SwingConstants.CENTER);
+//        titulo.setFont(new Font("Arial", Font.BOLD, 50));
+//        titulo.setForeground(Color.BLACK);
+//        titulo.setOpaque(false);
+//        add(titulo, BorderLayout.CENTER);
 
         playButton = new JButton("Jugar");
         exitButton = new JButton("Salir");
@@ -34,13 +34,10 @@ public class HomeScreenPanel extends JPanel {
         buttonPanel.add(playButton);
         buttonPanel.add(exitButton);
         buttonPanel.setOpaque(false);
-
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
-    public JButton getPlayButton() {
-        return playButton;
-    }
+    public JButton getPlayButton() {return playButton;}
 
     public JButton getExitButton() {
         return exitButton;
@@ -49,7 +46,7 @@ public class HomeScreenPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "main"+".GIF"));
+        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "pokemonInicio"+".PNG"));
         g.drawImage(back.getImage(), 0, 0, getWidth(), getHeight(), this);
     }
 }

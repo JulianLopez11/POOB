@@ -92,7 +92,8 @@ public class POOBkemonGUI extends JFrame{
     }
 
     public void closeWindow(){
-        JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE,
+        JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?",
+                JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_NO_OPTION);
         JDialog dialog = optionPane.createDialog(POOBkemonGUI.this, "Confirmar Salida");
         dialog.setVisible(true);
