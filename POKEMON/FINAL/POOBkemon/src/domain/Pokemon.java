@@ -149,6 +149,7 @@ public class Pokemon {
                 break;
             case "quemado":
                 losePS(maxPs / 16); // Pierde 1/16 de los PS máximos
+                // El ataque se reduce a la mitad (ya contemplado en getAttack())
                 break;
             // Otros efectos según estado
         }
