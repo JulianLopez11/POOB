@@ -50,9 +50,7 @@ public class TypeEffectiveness {
      * @param secondaryDefenseType Tipo secundario del defensor (puede ser null)
      * @return Multiplicador de efectividad total
      */
-    public static double getTotalEffectiveness(PokemonType attackType, 
-                                              PokemonType primaryDefenseType, 
-                                              PokemonType secondaryDefenseType) {
+    public static double getTotalEffectiveness(PokemonType attackType, PokemonType primaryDefenseType, PokemonType secondaryDefenseType) {
         double effectiveness = getEffectiveness(attackType, primaryDefenseType);
         
         if (secondaryDefenseType != null) {

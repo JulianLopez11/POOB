@@ -57,12 +57,10 @@ public class Movement {
      * Utiliza el movimiento reduciendo sus PP
      * @return true si se pudo usar, false si no hay PP
      */
-    public boolean use() {
+    public void use() {
         if (ppCurrent > 0) {
             ppCurrent--;
-            return true;
         }
-        return false;
     }
     
     /**
@@ -72,7 +70,7 @@ public class Movement {
     public boolean hits() {
         return Math.random() * 100 < accuracy;
     }
-    
+
     /**
      * Verifica si se activa el efecto secundario
      * @return true si se activa, false en caso contrario

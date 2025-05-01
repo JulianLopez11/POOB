@@ -51,26 +51,26 @@ public class Main {
         
         // Efectividad con tipos dobles
         System.out.println("\nEfectividad contra tipos dobles:");
-        double efectividad = Type.getTotalEffectiveness(
+        double efectividad = TypeEffectiveness.getTotalEffectiveness(
                 PokemonType.ELECTRICO, 
                 PokemonType.FUEGO, 
                 PokemonType.VOLADOR
         );
         System.out.println("Eléctrico vs Fuego/Volador: " + efectividad + " - " + 
-                Type.getEffectivenessMessage(efectividad));
+                TypeEffectiveness.getEffectivenessMessage(efectividad));
         
         // Simulación de batalla simple
         System.out.println("\n=== Simulación de Batalla ===");
-        simularBatalla(pikachu, blastoise);
+        simularBatalla(blastoise, charizard);
     }
     
     /**
      * Prueba la efectividad entre dos tipos y muestra el resultado
      */
     private static void probarEfectividad(PokemonType tipoAtaque, PokemonType tipoDefensa) {
-        double efectividad = Type.getEffectiveness(tipoAtaque, tipoDefensa);
+        double efectividad = TypeEffectiveness.getEffectiveness(tipoAtaque, tipoDefensa);
         System.out.println(tipoAtaque.getName() + " vs " + tipoDefensa.getName() + 
-                ": " + efectividad + " - " + Type.getEffectivenessMessage(efectividad));
+                ": " + efectividad + " - " + TypeEffectiveness.getEffectivenessMessage(efectividad));
     }
     
     /**
@@ -143,14 +143,14 @@ public class Main {
         String mensaje = atacante.getName() + " usa " + atacante.getMovements().get(0);
         
         // Calcular efectividad
-        double efectividad = Type.getTotalEffectiveness(
+        double efectividad = TypeEffectiveness.getTotalEffectiveness(
                 atacante.getPrincipalType(),
                 defensor.getPrincipalType(),
                 defensor.getSecondaryType() != null ? defensor.getSecondaryType() : null
         );
         
         // Mostrar mensaje de efectividad
-        String mensajeEfecto = Type.getEffectivenessMessage(efectividad);
+        String mensajeEfecto = TypeEffectiveness.getEffectivenessMessage(efectividad);
         if (!mensajeEfecto.isEmpty()) {
             mensaje += "\n" + mensajeEfecto;
         }

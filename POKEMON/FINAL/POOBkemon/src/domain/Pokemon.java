@@ -7,9 +7,8 @@ import java.util.Random;
  * Clase que representa un Pokémon con sus características y comportamientos
  */
 public class Pokemon {
-    private static String name;
+    private String name;
     private final int level = 100;
-    private int ps;
     private int maxPs;
     private int currentPs;
     private int attack;
@@ -71,7 +70,7 @@ public class Pokemon {
         }
 
         Random random = new Random();
-        double typeEffectiveness = Type.getTotalEffectiveness(
+        double typeEffectiveness = TypeEffectiveness.getTotalEffectiveness(
                 getMovementType(movementIndex),
                 target.getPrincipalType(),
                 target.getSecondaryType()
