@@ -15,14 +15,6 @@ public class HomeScreenPanel extends JPanel {
 
     private void prepareElements() {
         setLayout(new BorderLayout());
-
-        titulo = new JLabel("¡Bienvenido a POOBkemon!");
-        titulo.setHorizontalAlignment(SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 50));
-        titulo.setForeground(Color.BLACK);
-        titulo.setOpaque(false);
-        add(titulo, BorderLayout.CENTER);
-
         playButton = new JButton("Jugar");
         exitButton = new JButton("Salir");
         playButton.setBackground(Color.WHITE);
@@ -49,7 +41,7 @@ public class HomeScreenPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "main"+".GIF"));
+        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "pokemonInicio"+".PNG"));
         g.drawImage(back.getImage(), 0, 0, getWidth(), getHeight(), this);
     }
 }
