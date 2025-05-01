@@ -1,5 +1,4 @@
 package src.domain;
-
 /**
  * Enumeración de todos los tipos de Pokémon con su categoría de ataque (Físico/Especial)
  */

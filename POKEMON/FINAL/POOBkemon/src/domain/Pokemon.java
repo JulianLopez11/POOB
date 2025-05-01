@@ -17,7 +17,7 @@ public class Pokemon {
     private PokemonType principalType;
     private PokemonType secondaryType;
     private String state; // normal, paralizado, envenenado, dormido, quemado, congelado
-    private List<String> movements;
+    private List<Movement> movements;
     private int criticalHitRate;
 
     public Pokemon(String name, PokemonType principalType) {
@@ -69,25 +69,29 @@ public class Pokemon {
             return 0;
         }
 
+        Movement movement = movements.get(movementIndex);
         Random random = new Random();
         double typeEffectiveness = TypeEffectiveness.getTotalEffectiveness(
                 getMovementType(movementIndex),
                 target.getPrincipalType(),
                 target.getSecondaryType()
         );
-
-        // Fórmula simplificada de daño para Pokémon nivel 100
-        double baseDamage = ((42 * this.attack / target.getDefense()) / 50.0) + 2;
-
+    
+        // Obtener el poder base directamente del movimiento
+        int poderBase = movement.getPower();
+    
+        // Nueva fórmula de daño: ((2 * Nivel / 5 + 2) * Poder Base * (Ataque / Defensa) / 50 + 2) * Modificador
+        double baseDamage = ((2.0 * this.level / 5.0 + 2.0) * poderBase * (this.attack / (double)target.getDefense()) / 50.0) + 2.0;
+    
         // Factor de golpe crítico (1/16 de probabilidad por defecto)
         double criticalHit = 1.0;
         if (random.nextInt(16) < 1) {
             criticalHit = 1.5;
         }
-
+    
         // Factor aleatorio entre 0.85 y 1.0 (como en los juegos)
         double randomFactor = 0.85 + (random.nextDouble() * 0.15);
-
+    
         // Bono STAB (Same Type Attack Bonus)
         double stab = 1.0;
         PokemonType movementType = getMovementType(movementIndex);
@@ -95,9 +99,12 @@ public class Pokemon {
                 (this.secondaryType != null && movementType.equals(this.secondaryType))) {
             stab = 1.5;
         }
-
+    
+        // El modificador incluye: efectividad por tipo, crítico, STAB y factor aleatorio
+        double modificador = typeEffectiveness * criticalHit * randomFactor * stab;
+    
         // Cálculo final del daño
-        int finalDamage = (int) Math.round(baseDamage * typeEffectiveness * criticalHit * randomFactor * stab);
+        int finalDamage = (int) Math.round(baseDamage * modificador);
 
         // Los ataques siempre hacen al menos 1 de daño si no hay inmunidad
         return typeEffectiveness == 0.0 ? 0 : Math.max(1, finalDamage);
@@ -109,8 +116,10 @@ public class Pokemon {
      * @return Tipo del movimiento
      */
     private PokemonType getMovementType(int movementIndex) {
-        // En una implementación real, cada movimiento tendría su propio tipo
-        // Para simplificar, asumimos que el movimiento es del tipo principal del Pokémon
+        if (movementIndex >= 0 && movementIndex < movements.size()) {
+            return movements.get(movementIndex).getType();
+        }
+        // Si el índice no es válido, devolver el tipo principal del Pokémon como fallback
         return this.principalType;
     }
 
@@ -131,26 +140,6 @@ public class Pokemon {
     }
 
     /**
-     * Cambia el estado del Pokémon
-     * @param newState Nuevo estado
-     * @return true si el cambio fue exitoso, false si estaba protegido
-     */
-    public boolean changeState(String newState) {
-        // Algunos tipos son inmunes a ciertos estados
-        if ((newState.equals("quemado") && (principalType.equals("Fuego") ||
-                (secondaryType != null && secondaryType.equals("Fuego")))) ||
-                (newState.equals("paralizado") && (principalType.equals("Eléctrico") ||
-                        (secondaryType != null && secondaryType.equals("Eléctrico")))) ||
-                (newState.equals("envenenado") && (principalType.equals("Veneno") ||
-                        (secondaryType != null && secondaryType.equals("Veneno"))))) {
-            return false;
-        }
-
-        this.state = newState;
-        return true;
-    }
-
-    /**
      * Aplica el efecto del estado actual al final del turno
      */
     public void applyStateEffect() {
@@ -167,10 +156,10 @@ public class Pokemon {
 
     /**
      * Añade un movimiento al Pokémon
-     * @param movement Nombre del movimiento
+     * @param movement Objeto Movement que representa el movimiento
      * @return true si se pudo añadir, false si ya tiene 4 movimientos
      */
-    public boolean addMovement(String movement) {
+    public boolean addMovement(Movement movement) {
         if (movements.size() >= 4) {
             return false;
         }
@@ -183,7 +172,7 @@ public class Pokemon {
      * @param oldMovementIndex Índice del movimiento a reemplazar
      * @param newMovement Nuevo movimiento
      */
-    public void replaceMovement(int oldMovementIndex, String newMovement) {
+    public void replaceMovement(int oldMovementIndex, Movement newMovement) {
         if (oldMovementIndex >= 0 && oldMovementIndex < movements.size()) {
             movements.set(oldMovementIndex, newMovement);
         }
@@ -239,7 +228,7 @@ public class Pokemon {
         return state;
     }
 
-    public List<String> getMovements() {
+    public List<Movement> getMovements() {
         return new ArrayList<>(movements); // Devuelve una copia para evitar modificaciones no deseadas
     }
 

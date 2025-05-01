@@ -1,5 +1,4 @@
 package src.domain;
-
 /**
  * Clase que representa un movimiento o ataque de Pokémon
  */
@@ -8,162 +7,154 @@ public class Movement {
     private PokemonType type;
     private int power;
     private int accuracy;
-    private int ppMax;
-    private int ppCurrent;
-    private String category; // Físico, Especial o Estado
-    private String effect; // Efecto adicional como paralizar, quemar, etc.
-    private int effectChance; // Probabilidad del efecto (0-100)
-    
+    private int pp;
+    private int maxPp;
+    private String category;
+    private String effectState;
+    private int effectProbability;
+
     /**
-     * Constructor para crear un movimiento usando PokemonType
+     * Constructor para un movimiento sin efecto secundario
      * @param name Nombre del movimiento
-     * @param type Tipo del movimiento (PokemonType)
-     * @param power Poder base del ataque
-     * @param accuracy Precisión del ataque (0-100)
-     * @param pp Puntos de poder máximos
-     * @param category Categoría del movimiento
+     * @param type Tipo del movimiento
+     * @param power Poder base
+     * @param accuracy Precisión (de 0 a 100)
+     * @param pp Puntos de poder (usos)
+     * @param category Categoría ("Físico" o "Especial")
      */
     public Movement(String name, PokemonType type, int power, int accuracy, int pp, String category) {
         this.name = name;
         this.type = type;
         this.power = power;
         this.accuracy = accuracy;
-        this.ppMax = pp;
-        this.ppCurrent = pp;
+        this.pp = pp;
+        this.maxPp = pp;
         this.category = category;
-        this.effect = null;
-        this.effectChance = 0;
+        this.effectState = null;
+        this.effectProbability = 0;
     }
 
     /**
-     * Constructor para movimientos con efectos secundarios usando PokemonType
+     * Constructor para un movimiento con efecto secundario
      * @param name Nombre del movimiento
-     * @param type Tipo del movimiento (PokemonType)
-     * @param power Poder base del ataque
-     * @param accuracy Precisión del ataque
-     * @param pp Puntos de poder máximos
-     * @param category Categoría del movimiento
-     * @param effect Efecto secundario
-     * @param effectChance Probabilidad del efecto secundario
+     * @param type Tipo del movimiento
+     * @param power Poder base
+     * @param accuracy Precisión (de 0 a 100)
+     * @param pp Puntos de poder (usos)
+     * @param category Categoría ("Físico" o "Especial")
+     * @param effectState Estado que puede provocar
+     * @param effectProbability Probabilidad del efecto (de 0 a 100)
      */
-    public Movement(String name, PokemonType type, int power, int accuracy, int pp, 
-                    String category, String effect, int effectChance) {
+    public Movement(String name, PokemonType type, int power, int accuracy, int pp, String category, String effectState, int effectProbability) {
         this(name, type, power, accuracy, pp, category);
-        this.effect = effect;
-        this.effectChance = effectChance;
+        this.effectState = effectState;
+        this.effectProbability = effectProbability;
     }
 
     /**
-     * Utiliza el movimiento reduciendo sus PP
-     * @return true si se pudo usar, false si no hay PP
+     * Reduce los PP del movimiento al usarlo
+     * @return true si quedan PP, false si están agotados
      */
-    public void use() {
-        if (ppCurrent > 0) {
-            ppCurrent--;
+    public boolean use() {
+        if (pp > 0) {
+            pp--;
+            return true;
         }
-    }
-    
-    /**
-     * Verifica si el ataque acierta según su precisión
-     * @return true si acierta, false si falla
-     */
-    public boolean hits() {
-        return Math.random() * 100 < accuracy;
+        return false;
     }
 
     /**
-     * Verifica si se activa el efecto secundario
-     * @return true si se activa, false en caso contrario
-     */
-    public boolean activatesEffect() {
-        return effect != null && Math.random() * 100 < effectChance;
-    }
-    
-    /**
-     * Restaura completamente los PP del movimiento
+     * Restaura los PP al máximo
      */
     public void restorePP() {
-        ppCurrent = ppMax;
+        this.pp = this.maxPp;
     }
-    
+
     /**
-     * Restaura una cantidad específica de PP
-     * @param amount Cantidad de PP a restaurar
+     * Obtiene el nombre del movimiento
+     * @return Nombre del movimiento
      */
-    public void restorePP(int amount) {
-        ppCurrent = Math.min(ppMax, ppCurrent + amount);
-    }
-    
-    // Getters
-    
     public String getName() {
         return name;
     }
-    
+
     /**
-     * Obtiene el tipo del movimiento como enum PokemonType
-     * @return El tipo del movimiento
+     * Obtiene el tipo del movimiento
+     * @return Tipo del movimiento
      */
     public PokemonType getType() {
         return type;
     }
-    
+
     /**
-     * Obtiene el nombre del tipo del movimiento
-     * @return Nombre del tipo
+     * Obtiene el poder base del movimiento
+     * @return Poder base
      */
-    public String getTypeName() {
-        return type != null ? type.getName() : null;
-    }
-    
     public int getPower() {
         return power;
     }
-    
+
+    /**
+     * Obtiene la precisión del movimiento
+     * @return Precisión (de 0 a 100)
+     */
     public int getAccuracy() {
         return accuracy;
     }
-    
-    public int getPpCurrent() {
-        return ppCurrent;
+
+    /**
+     * Obtiene los PP actuales
+     * @return PP actuales
+     */
+    public int getPp() {
+        return pp;
     }
-    
-    public int getPpMax() {
-        return ppMax;
+
+    /**
+     * Obtiene los PP máximos
+     * @return PP máximos
+     */
+    public int getMaxPp() {
+        return maxPp;
     }
-    
+
+    /**
+     * Obtiene la categoría del movimiento
+     * @return Categoría ("Físico" o "Especial")
+     */
     public String getCategory() {
         return category;
     }
-    
-    public String getEffect() {
-        return effect;
-    }
-    
-    public int getEffectChance() {
-        return effectChance;
-    }
-    
+
     /**
-     * Comprueba si el movimiento tiene la categoría determinada por su tipo
-     * @return true si la categoría coincide con la del tipo, false en caso contrario
+     * Obtiene el efecto de estado que puede causar
+     * @return Efecto de estado, o null si no tiene
      */
-    public boolean hasCorrectCategory() {
-        return type != null && category.equals(type.getTypeMov());
+    public String getEffectState() {
+        return effectState;
     }
-    
+
     /**
-     * Asigna automáticamente la categoría según el tipo del movimiento
+     * Obtiene la probabilidad del efecto
+     * @return Probabilidad (de 0 a 100), o 0 si no tiene efecto
      */
-    public void assignCategoryFromType() {
-        if (type != null) {
-            this.category = type.getTypeMov();
-        }
+    public int getEffectProbability() {
+        return effectProbability;
     }
-    
+
     @Override
     public String toString() {
-        return name + " (" + getTypeName() + ") - Poder: " + power + " - Precisión: " + accuracy + 
-               " - PP: " + ppCurrent + "/" + ppMax;
+        String info = name + " - Tipo: " + type.getName() +
+                ", Poder: " + power +
+                ", Precisión: " + accuracy +
+                ", PP: " + pp + "/" + maxPp +
+                ", Categoría: " + category;
+        
+        if (effectState != null) {
+            info += ", Efecto: " + effectState + " (" + effectProbability + "%)";
+        }
+        
+        return info;
     }
 }
+
