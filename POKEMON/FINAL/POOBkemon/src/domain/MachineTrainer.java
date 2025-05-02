@@ -1,7 +1,12 @@
 package src.domain;
 
-public class MachineTrainer  extends Trainer{
+public abstract class MachineTrainer  extends Trainer{
+
     public MachineTrainer(String name) {
         super(name);
+
     }
+
+    public abstract void decide();
+
 }

@@ -7,11 +7,10 @@ import java.util.List;
  * Clase que representa a un entrenador Pokémon
  */
 public class Trainer {
-    private String nombre;
-    private List<Pokemon> team;
-    private Inventory inventory;
-    private Pokemon activePokemon;
-    private int badges;
+    protected String nombre;
+    protected List<Pokemon> team;
+    protected Inventory inventory;
+    protected Pokemon activePokemon;
 
     /**
      * Constructor para crear un entrenador
@@ -21,7 +20,6 @@ public class Trainer {
         this.nombre = nombre;
         this.team = new ArrayList<>();
         this.inventory = new Inventory(30); // Inventario con capacidad para 30 ítems
-        this.badges = 0;
     }
 
     /**
@@ -52,6 +50,7 @@ public class Trainer {
         if (index >= 0 && index < team.size()) {
             Pokemon newActive = team.get(index);
 
+
             // No cambiar a un Pokémon debilitado
             if (newActive.isFainted()) {
                 return false;
@@ -77,7 +76,7 @@ public class Trainer {
      * @param target Objetivo del ítem (normalmente un Pokémon)
      * @return true si se usó correctamente, false en caso contrario
      */
-    public boolean useItem(Item item, Object target) {
+    public boolean useItem(Item item, Pokemon target) {
         return inventory.useItem(item, target);
     }
 
@@ -122,21 +121,6 @@ public class Trainer {
     }
 
     /**
-     * Obtiene el número de medallas del entrenador
-     * @return Número de medallas
-     */
-    public int getBadges() {
-        return badges;
-    }
-
-    /**
-     * Añade una medalla al entrenador
-     */
-    public void addBadge() {
-        this.badges++;
-    }
-
-    /**
      * Verifica si todos los Pokémon del equipo están debilitados
      * @return true si todos están debilitados, false si al menos uno sigue en pie
      */
@@ -151,6 +135,6 @@ public class Trainer {
 
     @Override
     public String toString() {
-        return nombre + " (Medallas: " + badges + ", Pokémon: " + team.size() + ")";
+        return "Pokémon: " + team.size();
     }
 }

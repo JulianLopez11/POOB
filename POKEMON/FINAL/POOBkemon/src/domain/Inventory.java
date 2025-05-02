@@ -41,7 +41,7 @@ public class Inventory {
      * @param target El objetivo sobre el que usar el ítem
      * @return true si el ítem se usó correctamente
      */
-    public boolean useItem(Item item, Object target) {
+    public boolean useItem(Item item, Pokemon target) {
         if (!items.contains(item)) {
             return false;
         }

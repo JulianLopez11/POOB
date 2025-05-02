@@ -1,11 +1,14 @@
 package src.presentation;
 
+import src.domain.POOBkemon;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class POOBkemonGUI extends JFrame{
 
+    private POOBkemon pooBkemon;
     private JPanel contentPanel;
     private CardLayout cardLayout;
     private HomeScreenPanel homePanel;
@@ -14,6 +17,7 @@ public class POOBkemonGUI extends JFrame{
     private modePvsPPanel pvsPvsPPanel;
 
     public POOBkemonGUI(){
+        pooBkemon = new POOBkemon("normal");
         prepareElements();
         prepareActions();
     }

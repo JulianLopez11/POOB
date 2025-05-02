@@ -59,7 +59,7 @@ public class Pokemon {
     }
 
     /**
-     * Calcula el daño que este Pokémon puede hacer a otro
+     * Calcula el daño que este Pokémon puede hacer a otro y aplica posibles efectos secundarios
      * @param target Pokémon objetivo del ataque
      * @param movementIndex Índice del movimiento a utilizar
      * @return Cantidad de daño calculado
@@ -68,9 +68,23 @@ public class Pokemon {
         if (movementIndex < 0 || movementIndex >= movements.size()) {
             return 0;
         }
-
+    
         Movement movement = movements.get(movementIndex);
+        
+        // Verificar si hay suficientes PP
+        if (!movement.use()) {
+            System.out.println("No quedan PP para este movimiento!");
+            return 0;
+        }
+        
         Random random = new Random();
+        
+        // Verificar la precisión del movimiento
+        if (movement.getAccuracy() > 0 && random.nextInt(100) >= movement.getAccuracy()) {
+            System.out.println("¡El ataque de " + this.name + " falló!");
+            return 0;
+        }
+        
         double typeEffectiveness = TypeEffectiveness.getTotalEffectiveness(
                 getMovementType(movementIndex),
                 target.getPrincipalType(),
@@ -87,6 +101,7 @@ public class Pokemon {
         double criticalHit = 1.0;
         if (random.nextInt(16) < 1) {
             criticalHit = 1.5;
+            System.out.println("¡Golpe crítico!");
         }
     
         // Factor aleatorio entre 0.85 y 1.0 (como en los juegos)
@@ -105,9 +120,29 @@ public class Pokemon {
     
         // Cálculo final del daño
         int finalDamage = (int) Math.round(baseDamage * modificador);
-
-        // Los ataques siempre hacen al menos 1 de daño si no hay inmunidad
-        return typeEffectiveness == 0.0 ? 0 : Math.max(1, finalDamage);
+        
+        // Aplicar daño al objetivo
+        int damageDealt = typeEffectiveness == 0.0 ? 0 : Math.max(1, finalDamage);
+        
+        if (damageDealt > 0) {
+            target.losePS(damageDealt);
+            
+            // Mostrar mensaje de efectividad
+            if (typeEffectiveness > 1.5) {
+                System.out.println("¡Es super efectivo!");
+            } else if (typeEffectiveness < 1.0 && typeEffectiveness > 0) {
+                System.out.println("No es muy efectivo...");
+            } else if (typeEffectiveness == 0) {
+                System.out.println("No afecta a " + target.getName() + "...");
+            }
+            
+            // Aplicar efecto secundario si existe y el Pokémon no está debilitado
+            if (!target.isFainted() && movement.getEffectState() != null) {
+                target.applyStatusEffect(movement.getEffectState(), movement.getEffectProbability());
+            }
+        }
+    
+        return damageDealt;
     }
 
     /**
@@ -141,18 +176,88 @@ public class Pokemon {
 
     /**
      * Aplica el efecto del estado actual al final del turno
+     * @return true si el Pokémon puede actuar, false si está incapacitado
      */
-    public void applyStateEffect() {
+    public boolean applyStateEffect() {
+        Random random = new Random();
+        boolean canAct = true;
+        
         switch (this.state) {
             case "envenenado":
                 losePS(maxPs / 8); // Pierde 1/8 de los PS máximos
                 break;
+                
             case "quemado":
                 losePS(maxPs / 16); // Pierde 1/16 de los PS máximos
                 // El ataque se reduce a la mitad (ya contemplado en getAttack())
                 break;
-            // Otros efectos según estado
+                
+            case "congelado":
+                // 20% de probabilidad de descongelarse
+                if (random.nextInt(100) < 20) {
+                    this.state = "normal";
+                    System.out.println(name + " se ha descongelado!");
+                } else {
+                    canAct = false; // No puede actuar mientras está congelado
+                }
+                break;
+                
+            case "dormido":
+                // 33% de probabilidad de despertar
+                if (random.nextInt(100) < 33) {
+                    this.state = "normal";
+                    System.out.println(name + " se ha despertado!");
+                } else {
+                    canAct = false; // No puede actuar mientras duerme
+                }
+                break;
+                
+            case "paralizado":
+                // 25% de probabilidad de no poder moverse
+                if (random.nextInt(100) < 25) {
+                    System.out.println(name + " está paralizado y no puede moverse!");
+                    canAct = false;
+                }
+                // La velocidad se reduce a 1/4 (ya contemplado en getVelocity())
+                break;
+                
+            case "gravemente envenenado":
+                // El daño aumenta cada turno
+                int turno = 1; // Idealmente, deberíamos rastrear los turnos
+                losePS((maxPs * turno) / 16); // Aumenta progresivamente
+                break;
+                
+            case "confuso":
+                // 33% de probabilidad de golpearse a sí mismo
+                if (random.nextInt(100) < 33) {
+                    System.out.println(name + " está confuso y se golpeó a sí mismo!");
+                    // Daño autoinfligido: fórmula simplificada
+                    int damage = (int)((((2.0 * level / 5.0 + 2.0) * 40 * 
+                            (attack / (double)defense)) / 50.0) + 2.0);
+                    losePS(damage);
+                    canAct = false;
+                }
+                // 20% de probabilidad de recuperarse de la confusión
+                if (random.nextInt(100) < 20) {
+                    this.state = "normal";
+                    System.out.println(name + " ya no está confuso!");
+                }
+                break;
+                
+            case "atrapado":
+                losePS(maxPs / 16); // Daño por estar atrapado
+                // 20% de probabilidad de liberarse
+                if (random.nextInt(100) < 20) {
+                    this.state = "normal";
+                    System.out.println(name + " se ha liberado!");
+                }
+                break;
+                
+            default: // normal y otros estados no tienen efectos
+                break;
         }
+        
+        return canAct;
     }
 
     /**
@@ -206,15 +311,17 @@ public class Pokemon {
     }
 
     public int getAttack() {
-        return attack;
+        // Si está quemado, el ataque se reduce a la mitad
+        return "quemado".equals(state) ? attack / 2 : attack;
     }
-
+    
     public int getDefense() {
         return defense;
     }
-
+    
     public int getVelocity() {
-        return velocity;
+        // Si está paralizado, la velocidad se reduce a 1/4
+        return "paralizado".equals(state) ? velocity / 4 : velocity;
     }
 
     public PokemonType getPrincipalType() {
@@ -252,6 +359,71 @@ public class Pokemon {
         this.velocity = velocity;
     }
 
+    /**
+     * Aplica un efecto de estado al Pokémon con una probabilidad
+     * @param effectState El estado a aplicar
+     * @param probability Probabilidad del efecto (0-100)
+     * @return true si se aplicó el efecto, false en caso contrario
+     */
+    public boolean applyStatusEffect(String effectState, int probability) {
+        Random random = new Random();
+        
+        // Si el Pokémon ya tiene un estado, normalmente no se puede aplicar otro
+        if (!"normal".equals(this.state) && !"confuso".equals(effectState)) {
+            return false;
+        }
+        
+        // Verificar si el efecto se aplica según su probabilidad
+        if (random.nextInt(100) < probability) {
+            // Algunos tipos son inmunes a ciertos estados
+            boolean isImmune = false;
+            
+            // Verificar inmunidades por tipo
+            switch (effectState) {
+                case "envenenado":
+                case "gravemente envenenado":
+                    if (principalType == PokemonType.ACERO || principalType == PokemonType.VENENO ||
+                            (secondaryType != null && (secondaryType == PokemonType.ACERO || secondaryType == PokemonType.VENENO))) {
+                        isImmune = true;
+                    }
+                    break;
+                case "paralizado":
+                    if (principalType == PokemonType.TIERRA || 
+                            (secondaryType != null && secondaryType == PokemonType.TIERRA)) {
+                        isImmune = true;
+                    }
+                    break;
+                case "quemado":
+                    if (principalType == PokemonType.FUEGO || 
+                            (secondaryType != null && secondaryType == PokemonType.FUEGO)) {
+                        isImmune = true;
+                    }
+                    break;
+                case "congelado":
+                    if (principalType == PokemonType.HIELO || 
+                            (secondaryType != null && secondaryType == PokemonType.HIELO)) {
+                        isImmune = true;
+                    }
+                    break;
+            }
+            
+            if (!isImmune) {
+                // Si el efecto es confusión y ya tiene otro estado, se pueden acumular
+                if ("confuso".equals(effectState)) {
+                    System.out.println(name + " está confuso!");
+                    this.state = "confuso";
+                    return true;
+                } else {
+                    this.state = effectState;
+                    System.out.println(name + " ahora está " + effectState + "!");
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     @Override
     public String toString() {
         return name + " (Nivel " + level + ") - PS: " + currentPs + "/" + maxPs +
