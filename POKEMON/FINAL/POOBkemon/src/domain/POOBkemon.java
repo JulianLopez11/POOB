@@ -3,17 +3,17 @@ import javax.swing.*;
 import java.util.*;
 
 public class POOBkemon {
-    private ArrayList<Trainer> trainers; // Lista de entrenadores
+    private HashSet<Trainer> trainers; // Lista de entrenadores sin duplicados
     private String entrenadorTurno;
-    private ArrayList<Pokemon> pokedex;
-    private ArrayList<Movement> defaultMovementsList;
-    private ArrayList<Item> defaultItemsList;
+    private HashMap<String, Pokemon> pokedex;
+    private HashMap<String, Movement> defaultMovementsMap;
+    private HashMap<String, Item> defaultItemsMap;
 
     public POOBkemon(String modalidad) {
-        trainers = new ArrayList<>();
-        pokedex = new ArrayList<>();
-        defaultMovementsList = new ArrayList<>();
-        defaultItemsList = new ArrayList<>();
+        trainers = new HashSet<>();
+        pokedex = new HashMap<>();
+        defaultMovementsMap = new HashMap<>();
+        defaultItemsMap = new HashMap<>();
         
         // Inicializar los Pokémon, movimientos e ítems por defecto
         defaultPokemons();
@@ -38,27 +38,27 @@ public class POOBkemon {
         Pokemon gengar = new Pokemon("Gengar", PokemonType.FANTASMA, PokemonType.VENENO);
         Pokemon snorlax = new Pokemon("Snorlax", PokemonType.NORMAL);
         
-        pokedex.add(charizard);
-        pokedex.add(blastoise);
-        pokedex.add(venusaur);
-        pokedex.add(raichu);
-        pokedex.add(gengar);
-        pokedex.add(snorlax);
+        pokedex.put(charizard.getName(), charizard);
+        pokedex.put(blastoise.getName(), blastoise);
+        pokedex.put(venusaur.getName(), venusaur);
+        pokedex.put(raichu.getName(), raichu);
+        pokedex.put(gengar.getName(), gengar);
+        pokedex.put(snorlax.getName(), snorlax);
     }
 
     public void defaultItems() {
-        defaultItemsList.clear();
-        Item PsPotion = new NormalPotion();
-        Item SuperPotion = new SuperPotion();
-        Item HyperPotion = new HyperPotion();
+        defaultItemsMap.clear();
+        Item psPotion = new NormalPotion();
+        Item superPotion = new SuperPotion();
+        Item hyperPotion = new HyperPotion();
         
-        defaultItemsList.add(PsPotion);
-        defaultItemsList.add(SuperPotion);
-        defaultItemsList.add(HyperPotion);
+        defaultItemsMap.put(psPotion.getName(), psPotion);
+        defaultItemsMap.put(superPotion.getName(), superPotion);
+        defaultItemsMap.put(hyperPotion.getName(), hyperPotion);
     }
 
     public void defaultMovements() {
-        defaultMovementsList.clear();
+        defaultMovementsMap.clear();
         Movement lanzallamas = new Movement("Lanzallamas", PokemonType.FUEGO, 90, 100, 15, "Especial", "quemado", 10);
         Movement golpeAereo = new Movement("Golpe Aéreo", PokemonType.VOLADOR, 75, 95, 15, "Físico");
         Movement giroFuego = new Movement("Giro Fuego", PokemonType.FUEGO, 35, 85, 15, "Especial", "atrapado", 100);
@@ -75,31 +75,35 @@ public class POOBkemon {
         Movement atizadorX = new Movement("Atizador-X", PokemonType.ELECTRICO, 80, 100, 15, "Físico");
         Movement onda_trueno = new Movement("Onda Trueno", PokemonType.ELECTRICO, 0, 90, 20, "Especial", "paralizado", 100);
         Movement cola_hierro = new Movement("Cola Hierro", PokemonType.ACERO, 100, 75, 15, "Físico");
-
-        defaultMovementsList.add(golpeAereo);
-        defaultMovementsList.add(giroFuego);
-        defaultMovementsList.add(cuchillada);
-        defaultMovementsList.add(hidrobomba);
-        defaultMovementsList.add(rayo_hielo);
-        defaultMovementsList.add(cabezazo);
-        defaultMovementsList.add(hidropulso);
-        defaultMovementsList.add(rayoSolar);
-        defaultMovementsList.add(bombaLodo);
-        defaultMovementsList.add(polvoVeneno);
-        defaultMovementsList.add(drenadoras);
-        defaultMovementsList.add(trueno);
-        defaultMovementsList.add(atizadorX);
-        defaultMovementsList.add(onda_trueno);
-        defaultMovementsList.add(cola_hierro);
+    
+        defaultMovementsMap.put(lanzallamas.getName(), lanzallamas);
+        defaultMovementsMap.put(golpeAereo.getName(), golpeAereo);
+        defaultMovementsMap.put(giroFuego.getName(), giroFuego);
+        defaultMovementsMap.put(cuchillada.getName(), cuchillada);
+        defaultMovementsMap.put(hidrobomba.getName(), hidrobomba);
+        defaultMovementsMap.put(rayo_hielo.getName(), rayo_hielo);
+        defaultMovementsMap.put(cabezazo.getName(), cabezazo);
+        defaultMovementsMap.put(hidropulso.getName(), hidropulso);
+        defaultMovementsMap.put(rayoSolar.getName(), rayoSolar);
+        defaultMovementsMap.put(bombaLodo.getName(), bombaLodo);
+        defaultMovementsMap.put(polvoVeneno.getName(), polvoVeneno);
+        defaultMovementsMap.put(drenadoras.getName(), drenadoras);
+        defaultMovementsMap.put(trueno.getName(), trueno);
+        defaultMovementsMap.put(atizadorX.getName(), atizadorX);
+        defaultMovementsMap.put(onda_trueno.getName(), onda_trueno);
+        defaultMovementsMap.put(cola_hierro.getName(), cola_hierro);
     }
     
     public void coin() throws POOBkemonException {
         if (trainers == null || trainers.isEmpty()) {
             throw new POOBkemonException(POOBkemonException.NO_TRAINERS_FOUND);
         }
+        
+        List<Trainer> trainersList = new ArrayList<>(trainers);
         Random random = new Random();
-        int resultado = random.nextInt(trainers.size());
-        Trainer trainerSeleccionado = trainers.get(resultado);
+        int resultado = random.nextInt(trainersList.size());
+        Trainer trainerSeleccionado = trainersList.get(resultado);
+        
         try {
             entrenadorTurno = trainerSeleccionado.getNombre();
             JOptionPane.showMessageDialog(null,
@@ -115,42 +119,70 @@ public class POOBkemon {
     }
     
     /**
-     * Añade un entrenador a la lista de entrenadores
+     * Añade un entrenador al conjunto de entrenadores
      * @param trainer Entrenador a añadir
+     * @return true si fue añadido, false si ya existía
      */
-    public void addTrainer(Trainer trainer) {
-        trainers.add(trainer);
+    public boolean addTrainer(Trainer trainer) {
+        return trainers.add(trainer);
     }
     
     /**
-     * Obtiene la lista de Pokémon predefinidos
-     * @return Lista de Pokémon
+     * Obtiene la colección de Pokémon predefinidos
+     * @return Colección de Pokémon
      */
-    public ArrayList<Pokemon> getPokedex() {
-        return new ArrayList<>(pokedex);
+    public Collection<Pokemon> getPokedex() {
+        return pokedex.values();
     }
     
     /**
-     * Obtiene la lista de movimientos predefinidos
-     * @return Lista de movimientos
+     * Obtiene un Pokémon por su nombre
+     * @param name Nombre del Pokémon
+     * @return El Pokémon si existe, null si no
      */
-    public ArrayList<Movement> getDefaultMovementsList() {
-        return new ArrayList<>(defaultMovementsList);
+    public Pokemon getPokemonByName(String name) {
+        return pokedex.get(name);
     }
     
     /**
-     * Obtiene la lista de objetos predefinidos
-     * @return Lista de objetos
+     * Obtiene la colección de movimientos predefinidos
+     * @return Colección de movimientos
      */
-    public ArrayList<Item> getDefaultItemsList() {
-        return new ArrayList<>(defaultItemsList);
+    public Collection<Movement> getDefaultMovements() {
+        return defaultMovementsMap.values();
     }
     
     /**
-     * Obtiene la lista de entrenadores
-     * @return Lista de entrenadores
+     * Obtiene un movimiento por su nombre
+     * @param name Nombre del movimiento
+     * @return El movimiento si existe, null si no
      */
-    public ArrayList<Trainer> getTrainers() {
+    public Movement getMovementByName(String name) {
+        return defaultMovementsMap.get(name);
+    }
+    
+    /**
+     * Obtiene la colección de objetos predefinidos
+     * @return Colección de objetos
+     */
+    public Collection<Item> getDefaultItems() {
+        return defaultItemsMap.values();
+    }
+    
+    /**
+     * Obtiene un ítem por su nombre
+     * @param name Nombre del ítem
+     * @return El ítem si existe, null si no
+     */
+    public Item getItemByName(String name) {
+        return defaultItemsMap.get(name);
+    }
+    
+    /**
+     * Obtiene la colección de entrenadores
+     * @return Colección de entrenadores
+     */
+    public Collection<Trainer> getTrainers() {
         return new ArrayList<>(trainers);
     }
 }
