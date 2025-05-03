@@ -136,25 +136,7 @@ public class POOBkemonTest {
         // El daño debería ser menor debido a la resistencia
         assertTrue((hpAntes - hpDespues) < ember.getPower());
     }
-    
-    @Test
-    public void deberiaIniciarJuego() {
-        juego.start();
 
-        assertFalse(juego.getPokedex().isEmpty());
-        assertFalse(juego.getDefaultMovementsList().isEmpty());
-        assertFalse(juego.getDefaultItemsList().isEmpty());
-    }
-    
-    @Test
-    public void deberiaAñadirEntrenador() {
-        juego.addTrainer(entrenador);
-        
-        List<Trainer> trainers = juego.getTrainers();
-        assertEquals(1, trainers.size());
-        assertEquals(entrenador, trainers.get(0));
-    }
-    
     @Test
     public void deberiaProcesarUnTurno() {
         

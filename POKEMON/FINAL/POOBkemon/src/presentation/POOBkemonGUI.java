@@ -5,6 +5,7 @@ import src.domain.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 public class POOBkemonGUI extends JFrame{
 
@@ -41,11 +42,16 @@ public class POOBkemonGUI extends JFrame{
         pvsPvsPPanel = new modePvsPPanel();
         contentPanel.add(pvsPvsPPanel, "MODE PvsP");
 
-        pokedexPanel = new PokedexPanel();
+        pokedexPanel = new PokedexPanel(java.util.List.of(
+                "/resources/pickachu.png",
+                "/resources/charizard.png",
+                "/resources/blastoise.png",
+                "/resources/venasour.png"
+        ));
         contentPanel.add(pokedexPanel, "POKEDEX");
     }
 
-    public void prepareActions(){
+    public void prepareActions() {
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 closeWindow();
@@ -99,7 +105,6 @@ public class POOBkemonGUI extends JFrame{
                 cardLayout.show(contentPanel, "POKEMON SELECTION");
             }
         });
-
     }
 
     public void closeWindow(){
