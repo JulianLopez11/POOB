@@ -3,13 +3,13 @@ package src.presentation;
 import javax.swing.*;
 import java.awt.*;
 
-public class modePvsPPanel extends JPanel {
+public class ModePvsPPanel extends JPanel {
     private JButton normalMode;
     private JButton survivalMode;
     private JButton backButton;
     private JLabel titulo;
 
-    public modePvsPPanel() {
+    public ModePvsPPanel() {
         prepareElements();
     }
 

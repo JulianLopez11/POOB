@@ -9,6 +9,13 @@ public class DefensiveTrainer extends MachineTrainer { ;
         super(name);
     }
 
+    /*
+     * Su enfoque va principalmente a la defensa.
+     * Utiliza movimientos que potencian las estadísticas de
+     * defensa y/o defensa especial, que brindan protección contra ataques
+     * rivales o que bajan las estadísticas de ataque y/o ataque especial del jugador rival.
+     */
+
     @Override
     public Movement decide(Pokemon target){ //FALTA
         return null;

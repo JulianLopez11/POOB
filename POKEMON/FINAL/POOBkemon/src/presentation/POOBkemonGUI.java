@@ -5,7 +5,6 @@ import src.domain.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 public class POOBkemonGUI extends JFrame{
 
@@ -15,7 +14,8 @@ public class POOBkemonGUI extends JFrame{
     private HomeScreenPanel homePanel;
     private PlayScreenPanel playPanel;
     private PokedexPanel pokedexPanel;
-    private modePvsPPanel pvsPvsPPanel;
+    private ModePvsPPanel modePvsPPanel;
+    private Fights fightsPanel;
 
     public POOBkemonGUI(){
         pooBkemon = new POOBkemon("normal");
@@ -39,8 +39,11 @@ public class POOBkemonGUI extends JFrame{
         playPanel = new PlayScreenPanel();
         contentPanel.add(playPanel, "JUGAR");
 
-        pvsPvsPPanel = new modePvsPPanel();
-        contentPanel.add(pvsPvsPPanel, "MODE PvsP");
+        modePvsPPanel = new ModePvsPPanel();
+        contentPanel.add(modePvsPPanel, "MODE PvsP");
+
+        fightsPanel = new Fights();
+        contentPanel.add(fightsPanel, "BATALLA");
 
         pokedexPanel = new PokedexPanel(java.util.List.of(
                 "/resources/pickachu.png",
@@ -49,6 +52,7 @@ public class POOBkemonGUI extends JFrame{
                 "/resources/venasour.png"
         ));
         contentPanel.add(pokedexPanel, "POKEDEX");
+
     }
 
     public void prepareActions() {
@@ -94,17 +98,28 @@ public class POOBkemonGUI extends JFrame{
             }
         });
 
-        pvsPvsPPanel.getBackButton().addActionListener(new ActionListener() {
+        modePvsPPanel.getBackButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(contentPanel, "JUGAR");
             }
         });
 
-        pvsPvsPPanel.getNormalMode().addActionListener(new ActionListener() {
+        //Batalla
+        modePvsPPanel.getSurvivalMode().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {cardLayout.show(contentPanel, "BATALLA");}
+        });
+
+        modePvsPPanel.getNormalMode().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(contentPanel, "POKEMON SELECTION");
             }
         });
+
+        //Batalla
+        playPanel.getMVsMButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {cardLayout.show(contentPanel, "BATALLA");}
+        });
+
     }
 
     public void closeWindow(){
