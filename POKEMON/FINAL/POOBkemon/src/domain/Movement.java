@@ -63,11 +63,8 @@ public class Movement {
         return false;
     }
 
-    /**
-     * Restaura los PP al máximo
-     */
-    public void restorePP() {
-        this.pp = this.maxPp;
+    public boolean canUse(){
+        return pp > 0;
     }
 
     /**
@@ -142,19 +139,10 @@ public class Movement {
         return effectProbability;
     }
 
-    @Override
-    public String toString() {
-        String info = name + " - Tipo: " + type.getName() +
-                ", Poder: " + power +
-                ", Precisión: " + accuracy +
-                ", PP: " + pp + "/" + maxPp +
-                ", Categoría: " + category;
-        
-        if (effectState != null) {
-            info += ", Efecto: " + effectState + " (" + effectProbability + "%)";
-        }
-        
-        return info;
+    public double getMultiplicator(PokemonType attackerType, PokemonType defenderType) {
+        double multiplicator = TypeEffectiveness.getEffectiveness(attackerType, defenderType);
+        return multiplicator;
     }
+
 }
 

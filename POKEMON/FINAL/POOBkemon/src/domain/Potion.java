@@ -24,28 +24,20 @@ public class Potion extends Item {
      * @return true si se usó correctamente, false si no
      */
     @Override
-    public boolean use(Object target) {
+    public boolean use(Object target){
         if (!(target instanceof Pokemon)) {
             return false;
         }
-        
         Pokemon pokemon = (Pokemon) target;
-        
-        // Verificar si el Pokémon está debilitado (no se pueden usar pociones en Pokémon debilitados)
         if (pokemon.isFainted()) {
             return false;
         }
-        
-        // Verificar si los PS ya están al máximo
         if (pokemon.getCurrentPs() >= pokemon.getMaxPs()) {
             return false;
         }
-        
-        // Aplicar la curación
         pokemon.heal(healAmount);
         return true;
     }
-    
     /**
      * Obtiene la cantidad de curación
      * @return Cantidad de PS que restaura

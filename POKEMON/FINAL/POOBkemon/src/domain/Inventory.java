@@ -4,12 +4,11 @@ import java.util.*;
 
 public class Inventory {
 
-    private int capacity;
+    private final int capacity = 10;
     private List<Pokemon> pokemons = new ArrayList<>();
     private List<Item> items = new ArrayList<>();
 
-    public Inventory(int capacity) {
-        this.capacity = capacity;
+    public Inventory() {
     }
 
     public void addPokemon(Pokemon pokemon){
@@ -45,14 +44,10 @@ public class Inventory {
         if (!items.contains(item)) {
             return false;
         }
-        
         boolean itemUsed = item.use(target);
-        
-        // Si el ítem se usó correctamente, lo eliminamos del inventario
         if (itemUsed) {
             items.remove(item);
         }
-        
         return itemUsed;
     }
 
@@ -61,7 +56,7 @@ public class Inventory {
      * @return Lista con todos los ítems
      */
     public List<Item> getAllItems() {
-        return new ArrayList<>(items); // Devuelve una copia para evitar modificaciones no deseadas
+        return new ArrayList<>(items);
     }
 
     /**
@@ -69,9 +64,8 @@ public class Inventory {
      * @return Lista con todos los Pokémon
      */
     public List<Pokemon> getAllPokemons() {
-        return new ArrayList<>(pokemons); // Devuelve una copia para evitar modificaciones no deseadas
+        return new ArrayList<>(pokemons);
     }
-
     /**
      * Verifica si el inventario está lleno
      * @return true si el inventario está lleno, false en caso contrario
@@ -94,5 +88,29 @@ public class Inventory {
      */
     public int getAvailableSpace() {
         return capacity - (pokemons.size() + items.size());
+    }
+
+    public boolean canChange(Pokemon pokemon){
+        return pokemon.isAlive() && pokemons.contains(pokemon);
+    }
+
+    public ArrayList<Pokemon> getAlivePokemons(){
+        ArrayList<Pokemon> alivePokemons= new ArrayList<Pokemon> ();
+        for(Pokemon p: pokemons){
+            if(p.isAlive()) alivePokemons.add(p);
+        }
+        return alivePokemons;
+    }
+
+    public ArrayList<Pokemon> getAlivePokemons(Pokemon pokemon){
+        ArrayList<Pokemon> alivePokes= new ArrayList<Pokemon> ();
+        for(Pokemon p: pokemons){
+            if(p.isAlive() && !p.equals(pokemon)) alivePokes.add(p);
+        }
+        return alivePokes;
+    }
+
+    public boolean contains(Pokemon pokemon){
+        return pokemons.contains(pokemon);
     }
 }

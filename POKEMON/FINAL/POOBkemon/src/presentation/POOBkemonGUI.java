@@ -1,6 +1,6 @@
 package src.presentation;
 
-import src.domain.POOBkemon;
+import src.domain.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -93,6 +93,13 @@ public class POOBkemonGUI extends JFrame{
                 cardLayout.show(contentPanel, "JUGAR");
             }
         });
+
+        pvsPvsPPanel.getNormalMode().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "POKEMON SELECTION");
+            }
+        });
+
     }
 
     public void closeWindow(){

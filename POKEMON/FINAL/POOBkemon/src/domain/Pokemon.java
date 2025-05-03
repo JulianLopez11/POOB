@@ -16,7 +16,7 @@ public class Pokemon {
     private int velocity;
     private PokemonType principalType;
     private PokemonType secondaryType;
-    private String state; // normal, paralizado, envenenado, dormido, quemado, congelado
+    private String state;
     private List<Movement> movements;
     private int criticalHitRate;
 
@@ -26,7 +26,7 @@ public class Pokemon {
         this.secondaryType = null;
         this.state = "normal";
         this.movements = new ArrayList<>(4);
-        this.criticalHitRate = 6; // 1/16 probabilidad (valor típico en los juegos)
+        this.criticalHitRate = 6;
 
         // Estadísticas base ara un Pokémon nivel 100
         Random random = new Random();
@@ -49,16 +49,6 @@ public class Pokemon {
     }
 
     /**
-     * Método para que el Pokémon pierda puntos de salud
-     * @param damage Cantidad de daño recibido
-     * @return Puntos de salud restantes
-     */
-    public int losePS(int damage) {
-        this.currentPs = Math.max(0, this.currentPs - damage);
-        return this.currentPs;
-    }
-
-    /**
      * Calcula el daño que este Pokémon puede hacer a otro y aplica posibles efectos secundarios
      * @param target Pokémon objetivo del ataque
      * @param movementIndex Índice del movimiento a utilizar
@@ -68,45 +58,45 @@ public class Pokemon {
         if (movementIndex < 0 || movementIndex >= movements.size()) {
             return 0;
         }
-    
+
         Movement movement = movements.get(movementIndex);
-        
+
         // Verificar si hay suficientes PP
         if (!movement.use()) {
             System.out.println("No quedan PP para este movimiento!");
             return 0;
         }
-        
+
         Random random = new Random();
-        
+
         // Verificar la precisión del movimiento
         if (movement.getAccuracy() > 0 && random.nextInt(100) >= movement.getAccuracy()) {
             System.out.println("¡El ataque de " + this.name + " falló!");
             return 0;
         }
-        
+
         double typeEffectiveness = TypeEffectiveness.getTotalEffectiveness(
                 getMovementType(movementIndex),
                 target.getPrincipalType(),
                 target.getSecondaryType()
         );
-    
+
         // Obtener el poder base directamente del movimiento
         int poderBase = movement.getPower();
-    
+
         // Nueva fórmula de daño: ((2 * Nivel / 5 + 2) * Poder Base * (Ataque / Defensa) / 50 + 2) * Modificador
         double baseDamage = ((2.0 * this.level / 5.0 + 2.0) * poderBase * (this.attack / (double)target.getDefense()) / 50.0) + 2.0;
-    
+
         // Factor de golpe crítico (1/16 de probabilidad por defecto)
         double criticalHit = 1.0;
         if (random.nextInt(16) < 1) {
             criticalHit = 1.5;
             System.out.println("¡Golpe crítico!");
         }
-    
+
         // Factor aleatorio entre 0.85 y 1.0 (como en los juegos)
         double randomFactor = 0.85 + (random.nextDouble() * 0.15);
-    
+
         // Bono STAB (Same Type Attack Bonus)
         double stab = 1.0;
         PokemonType movementType = getMovementType(movementIndex);
@@ -114,20 +104,19 @@ public class Pokemon {
                 (this.secondaryType != null && movementType.equals(this.secondaryType))) {
             stab = 1.5;
         }
-    
+
         // El modificador incluye: efectividad por tipo, crítico, STAB y factor aleatorio
         double modificador = typeEffectiveness * criticalHit * randomFactor * stab;
-    
+
         // Cálculo final del daño
         int finalDamage = (int) Math.round(baseDamage * modificador);
-        
+
         // Aplicar daño al objetivo
         int damageDealt = typeEffectiveness == 0.0 ? 0 : Math.max(1, finalDamage);
-        
+
         if (damageDealt > 0) {
             target.losePS(damageDealt);
-            
-            // Mostrar mensaje de efectividad
+
             if (typeEffectiveness > 1.5) {
                 System.out.println("¡Es super efectivo!");
             } else if (typeEffectiveness < 1.0 && typeEffectiveness > 0) {
@@ -135,27 +124,14 @@ public class Pokemon {
             } else if (typeEffectiveness == 0) {
                 System.out.println("No afecta a " + target.getName() + "...");
             }
-            
+
             // Aplicar efecto secundario si existe y el Pokémon no está debilitado
             if (!target.isFainted() && movement.getEffectState() != null) {
                 target.applyStatusEffect(movement.getEffectState(), movement.getEffectProbability());
             }
         }
-    
-        return damageDealt;
-    }
 
-    /**
-     * Obtiene el tipo de un movimiento específico
-     * @param movementIndex Índice del movimiento
-     * @return Tipo del movimiento
-     */
-    private PokemonType getMovementType(int movementIndex) {
-        if (movementIndex >= 0 && movementIndex < movements.size()) {
-            return movements.get(movementIndex).getType();
-        }
-        // Si el índice no es válido, devolver el tipo principal del Pokémon como fallback
-        return this.principalType;
+        return damageDealt;
     }
 
     /**
@@ -172,6 +148,42 @@ public class Pokemon {
      */
     public void heal(int amount) {
         this.currentPs = Math.min(this.maxPs, this.currentPs + amount);
+    }
+
+    /**
+     * Método para que el Pokémon pierda puntos de salud
+     * @param damage Cantidad de daño recibido
+     * @return Puntos de salud restantes
+     */
+    public int losePS(int damage) {
+        this.currentPs = Math.max(0, this.currentPs - damage);
+        return this.currentPs;
+    }
+
+    /**
+     * Añade un movimiento al Pokémon
+     * @param movement Objeto Movement que representa el movimiento
+     * @return true si se pudo añadir, false si ya tiene 4 movimientos
+     */
+    public boolean addMovement(Movement movement) {
+        if (movements.size() >= 4) {
+            return false;
+        }
+        movements.add(movement);
+        return true;
+    }
+
+
+    /**
+     * Obtiene el tipo de un movimiento específico
+     * @param movementIndex Índice del movimiento
+     * @return Tipo del movimiento
+     */
+    private PokemonType getMovementType(int movementIndex) {
+        if (movementIndex >= 0 && movementIndex < movements.size()) {
+            return movements.get(movementIndex).getType();
+        }
+        return principalType;
     }
 
     /**
@@ -253,24 +265,11 @@ public class Pokemon {
                 }
                 break;
                 
-            default: // normal y otros estados no tienen efectos
+            default:
                 break;
         }
         
         return canAct;
-    }
-
-    /**
-     * Añade un movimiento al Pokémon
-     * @param movement Objeto Movement que representa el movimiento
-     * @return true si se pudo añadir, false si ya tiene 4 movimientos
-     */
-    public boolean addMovement(Movement movement) {
-        if (movements.size() >= 4) {
-            return false;
-        }
-        movements.add(movement);
-        return true;
     }
 
     /**
@@ -311,7 +310,6 @@ public class Pokemon {
     }
 
     public int getAttack() {
-        // Si está quemado, el ataque se reduce a la mitad
         return "quemado".equals(state) ? attack / 2 : attack;
     }
     
@@ -320,7 +318,6 @@ public class Pokemon {
     }
     
     public int getVelocity() {
-        // Si está paralizado, la velocidad se reduce a 1/4
         return "paralizado".equals(state) ? velocity / 4 : velocity;
     }
 
@@ -337,7 +334,7 @@ public class Pokemon {
     }
 
     public List<Movement> getMovements() {
-        return new ArrayList<>(movements); // Devuelve una copia para evitar modificaciones no deseadas
+        return new ArrayList<>(movements);
     }
 
     public void setName(String name) {
@@ -412,18 +409,39 @@ public class Pokemon {
                 if ("confuso".equals(effectState)) {
                     System.out.println(name + " está confuso!");
                     this.state = "confuso";
-                    return true;
                 } else {
                     this.state = effectState;
                     System.out.println(name + " ahora está " + effectState + "!");
-                    return true;
                 }
+                return true;
             }
         }
         
         return false;
     }
-    
+
+    public boolean isAlive(){
+        return currentPs > 0;
+    }
+
+    public ArrayList<Movement> movementsUsables(){
+        ArrayList<Movement> temp = new ArrayList<>();
+        for(Movement m: movements){
+            if (m.canUse()){
+                temp.add(m);
+            }
+        }
+        return temp;
+    }
+
+    public Movement aleatoryMovement(Pokemon target){
+        ArrayList<Movement> temp = movementsUsables();
+        Random random = new Random();
+        int ramdomNum = random.nextInt(temp.size());
+        Movement aleatoryMovement = temp.get(ramdomNum);
+        return aleatoryMovement;
+    }
+
     @Override
     public String toString() {
         return name + " (Nivel " + level + ") - PS: " + currentPs + "/" + maxPs +

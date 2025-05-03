@@ -15,7 +15,7 @@ public class Revive extends Item {
             "Revive", 
             "Revive a un Pokémon debilitado y restaura la mitad de sus PS máximos."
         );
-        this.isMaxRevive = false;
+        isMaxRevive = false;
     }
     
     /**
@@ -41,19 +41,12 @@ public class Revive extends Item {
         if (!(target instanceof Pokemon)) {
             return false;
         }
-        
         Pokemon pokemon = (Pokemon) target;
-        
-        // Verificar si el Pokémon está debilitado (él revive solo funciona en Pokémon debilitados)
         if (!pokemon.isFainted()) {
             return false;
         }
-        
-        // Calcular la nueva cantidad de PS
         int maxHp = pokemon.getMaxPs();
         int newHp = isMaxRevive ? maxHp : maxHp / 2;
-        
-        // Aplicar la revivida
         pokemon.heal(newHp);
         return true;
     }

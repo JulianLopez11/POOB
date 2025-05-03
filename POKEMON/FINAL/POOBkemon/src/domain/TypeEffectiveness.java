@@ -56,7 +56,6 @@ public class TypeEffectiveness {
         if (secondaryDefenseType != null) {
             effectiveness *= getEffectiveness(attackType, secondaryDefenseType);
         }
-        
         return effectiveness;
     }
     
