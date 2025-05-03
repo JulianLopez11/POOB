@@ -71,7 +71,7 @@ public class POOBkemonTest {
         entrenador.addPokemon(pokemon1);
         entrenador.addPokemon(pokemon2);
         
-        assertTrue(entrenador.switchPokemon(1));
+        assertTrue(entrenador.switchPokemon(pokemon2));
         assertEquals(pokemon2, entrenador.getActivePokemon());
     }
     
@@ -82,7 +82,7 @@ public class POOBkemonTest {
 
         pokemon2.losePS(400);
         
-        assertFalse(entrenador.switchPokemon(1));
+        assertFalse(entrenador.switchPokemon(pokemon2));
         assertEquals(pokemon1, entrenador.getActivePokemon());
     }
     
