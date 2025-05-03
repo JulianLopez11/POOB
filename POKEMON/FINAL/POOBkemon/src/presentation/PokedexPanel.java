@@ -5,14 +5,18 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PokedexPanel extends JPanel {
     private JButton backButton;
     private JButton leftButton;
     private JButton rightButton;
+    private JButton selectButton;
     private JLabel pokemonImageLabel;
     private List<String> pokemonImages;
+    private ArrayList<JButton> buttons = new ArrayList<>();
+
     private int currentIndex;
 
     public PokedexPanel(List<String> pokemonImages) {
@@ -37,32 +41,44 @@ public class PokedexPanel extends JPanel {
         setLayout(new BorderLayout());
         setOpaque(false);
 
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 3));
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 4));
         bottomPanel.setOpaque(false);
 
         backButton = new JButton("Volver");
         bottomPanel.add(backButton);
+        buttons.add(backButton);
 
         leftButton = new JButton("←");
         leftButton.addActionListener(e -> showPreviousPokemon());
         bottomPanel.add(leftButton);
+        buttons.add(leftButton);
 
         rightButton = new JButton("→");
         rightButton.addActionListener(e -> showNextPokemon());
         bottomPanel.add(rightButton);
+        buttons.add(rightButton);
+
+        selectButton = new JButton("Seleccionar Pokemon");
+        bottomPanel.add(selectButton);
+        buttons.add(selectButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
 
         // Panel central para imagen
-        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 40, 30));
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 50, 30));
         centerPanel.setOpaque(false);
 
         pokemonImageLabel = new JLabel();
         centerPanel.add(pokemonImageLabel);
 
         add(centerPanel, BorderLayout.CENTER);
+        setButtonsColor();
     }
-
+    private void setButtonsColor() {
+        for (JButton button : buttons) {
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+    }
     private void updatePokemonImage() {
         if (pokemonImages.isEmpty()) {
             pokemonImageLabel.setIcon(null);
@@ -108,6 +124,8 @@ public class PokedexPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        repaint();
+        revalidate();
         ImageIcon back = new ImageIcon(getClass().getResource("/resources/pokedexFinal.GIF"));
         g.drawImage(back.getImage(), 0, 0, getWidth(), getHeight(), this);
     }

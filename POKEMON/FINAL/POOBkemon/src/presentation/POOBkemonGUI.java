@@ -46,10 +46,10 @@ public class POOBkemonGUI extends JFrame{
         contentPanel.add(fightsPanel, "BATALLA");
 
         pokedexPanel = new PokedexPanel(java.util.List.of(
-                "/resources/pickachu.png",
-                "/resources/charizard.png",
-                "/resources/blastoise.png",
-                "/resources/venasour.png"
+                "/resources/raichuFront.png",
+                "/resources/charizardFront.png",
+                "/resources/blastoiseFront.png",
+                "/resources/venusaurFront.png"
         ));
         contentPanel.add(pokedexPanel, "POKEDEX");
 
@@ -86,16 +86,15 @@ public class POOBkemonGUI extends JFrame{
             }
         });
 
-        pokedexPanel.getBackButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "JUGAR");
-            }
-        });
-
         playPanel.getPVsPButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 cardLayout.show(contentPanel, "MODE PvsP");
             }
+        });
+
+        //Batalla
+        playPanel.getMVsMButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {cardLayout.show(contentPanel, "BATALLA");}
         });
 
         modePvsPPanel.getBackButton().addActionListener(new ActionListener() {
@@ -115,10 +114,13 @@ public class POOBkemonGUI extends JFrame{
             }
         });
 
-        //Batalla
-        playPanel.getMVsMButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {cardLayout.show(contentPanel, "BATALLA");}
+        pokedexPanel.getBackButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "JUGAR");
+            }
         });
+
+
 
     }
 

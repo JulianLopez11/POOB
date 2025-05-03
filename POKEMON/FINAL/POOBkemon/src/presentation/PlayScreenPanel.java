@@ -22,8 +22,8 @@ public class PlayScreenPanel extends JPanel {
 
         titulo = new JLabel("¡Selecciona la Modalidad!");
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 24));
-        titulo.setForeground(Color.WHITE);
+        titulo.setFont(new Font("Arial", Font.BOLD, 25));
+        titulo.setForeground(Color.BLACK);
         add(titulo, BorderLayout.NORTH);
 
         JPanel modePanel = new JPanel(new GridLayout(4, 1, 0, 15));
@@ -31,8 +31,11 @@ public class PlayScreenPanel extends JPanel {
         modePanel.setPreferredSize(new Dimension(250, 200)); // Tamaño fijo para centrado visual
 
         PVsPButton = new JButton("Jugador Vs Jugador");
+        PVsPButton.setContentAreaFilled(false);
         PVsMButton = new JButton("Jugador Vs Máquina");
+        PVsMButton.setContentAreaFilled(false);
         MVsMButton = new JButton("Máquina Vs Máquina");
+        MVsMButton.setContentAreaFilled(false);
 
         modePanel.add(PVsPButton);
         modePanel.add(PVsMButton);
@@ -48,10 +51,13 @@ public class PlayScreenPanel extends JPanel {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 50, 20, 50));
 
         pokedexButton = new JButton("Pokedex");
+        pokedexButton.setContentAreaFilled(false);
         backButton = new JButton("Volver");
+        backButton.setContentAreaFilled(false);
         bottomPanel.add(pokedexButton);
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
+
 
         buttons.add(backButton);
         buttons.add(PVsPButton);
@@ -63,33 +69,37 @@ public class PlayScreenPanel extends JPanel {
 
     private void setButtonsColor() {
         for (JButton button : buttons) {
-            button.setBackground(new Color(255, 255, 255, 200));
-            button.setForeground(Color.BLACK);
-            button.setFocusPainted(false);
+            button.setOpaque(false);
+            button.setContentAreaFilled(true); // Permite pintar el fondo
+            button.setBackground(new Color(255, 255, 255, 150)); // Fondo blanco semitransparente
+            button.setForeground(Color.BLACK); // Texto negro
+            button.setFont(new Font("Arial", Font.BOLD, 18)); // Fuente personalizada
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Estilo de cursor
+            button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         }
     }
 
+    //Getters
     public JButton getBackButton(){
         return backButton;
     }
     public JButton getPokedexButton() {
         return pokedexButton;
     }
-
     public JButton getMVsMButton() {
         return MVsMButton;
     }
     public JButton getPVsPButton() {
         return PVsPButton;
     }
-    public JButton getPVsMButton() {
-        return PVsMButton;
-    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "inicio2"+".GIF"));
+        repaint();
+        revalidate();
+        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "seleccionar"+".GIF"));
         g.drawImage(back.getImage(), 0, 0, getWidth(), getHeight(), this);
     }
 }

@@ -2,60 +2,81 @@ package src.presentation;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ModePvsPPanel extends JPanel {
-    private JButton normalMode;
-    private JButton survivalMode;
-    private JButton backButton;
     private JLabel titulo;
-
+    private JButton backButton;
+    private JButton normalButton;
+    private JButton survivalButton;
+    private ArrayList<JButton> buttons = new ArrayList<>();
     public ModePvsPPanel() {
         prepareElements();
     }
-
     private void prepareElements() {
         setLayout(new BorderLayout());
 
-        titulo = new JLabel("¡Selecciona el Modo!");
+        titulo = new JLabel("¡Selecciona la Modalidad!");
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
-        titulo.setFont(new Font("Arial", Font.BOLD, 50));
-        titulo.setForeground(Color.WHITE);
-        titulo.setOpaque(false);
-        add(titulo, BorderLayout.CENTER);
+        titulo.setFont(new Font("Arial", Font.BOLD, 24));
+        titulo.setForeground(Color.GRAY);
+        add(titulo, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(3,1));
-        buttonPanel.setOpaque(false);
-        normalMode = new JButton("Normal");
-        survivalMode = new JButton("Survival");
+        JPanel modePanel = new JPanel(new GridLayout(4, 1, 0, 15));
+        modePanel.setOpaque(false);
+        modePanel.setPreferredSize(new Dimension(250, 200)); // Tamaño fijo para centrado visual
+
+        normalButton = new JButton("Normal");
+        normalButton.setContentAreaFilled(false);
+        survivalButton = new JButton("Supervivencia");
+        survivalButton.setContentAreaFilled(false);
         backButton = new JButton("Volver");
-        normalMode.setBackground(new Color(255, 255, 255,200));
-        survivalMode.setBackground(new Color(255, 255, 255,200));
-        backButton.setBackground(new Color(255, 255, 255,200));
+        backButton.setContentAreaFilled(false);
 
-        buttonPanel.add(normalMode);
-        buttonPanel.add(survivalMode);
-        buttonPanel.add(backButton);
-        add(buttonPanel, BorderLayout.SOUTH);
+        modePanel.add(normalButton);
+        modePanel.add(survivalButton);
+        modePanel.add(backButton);
 
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        centerPanel.setOpaque(false);
+        centerPanel.add(modePanel);
+        add(centerPanel, BorderLayout.SOUTH);
 
+        buttons.add(normalButton);
+        buttons.add(survivalButton);
+        buttons.add(backButton);
+
+        setButtonsColor();
     }
 
-    public JButton getNormalMode() {
-        return normalMode;
+    private void setButtonsColor() {
+        for (JButton button : buttons) {// Borde verde oscuro
+            button.setOpaque(false);
+            button.setContentAreaFilled(true); // Permite pintar el fondo
+            button.setBackground(new Color(255, 255, 255, 150)); // Fondo blanco semitransparente
+            button.setForeground(Color.BLACK); // Texto negro
+            button.setFont(new Font("Arial", Font.BOLD, 18)); // Fuente personalizada
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Estilo de cursor
+            button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Cambia el cursor al pasar sobre el botón
+        }
     }
 
-    public JButton getSurvivalMode() {
-        return survivalMode;
-    }
-
-    public  JButton getBackButton() {
+    public JButton getBackButton(){
         return backButton;
+    }
+    public JButton getNormalMode() {
+        return normalButton;
+    }
+    public JButton getSurvivalMode() {
+        return survivalButton;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "modePvsP"+".GIF"));
+        repaint();
+        revalidate();
+        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "elegirModo"+".png"));
         g.drawImage(back.getImage(), 0, 0, getWidth(), getHeight(), this);
     }
 }
