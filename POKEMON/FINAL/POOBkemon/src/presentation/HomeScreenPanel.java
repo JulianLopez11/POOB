@@ -17,12 +17,11 @@ public class HomeScreenPanel extends JPanel {
         setLayout(new BorderLayout());
         playButton = new JButton("Jugar");
         exitButton = new JButton("Salir");
-        playButton.setBackground(Color.WHITE);
-        exitButton.setBackground(Color.WHITE);
         playButton.setBackground(new Color(255, 255, 255, 200));
         exitButton.setBackground(new Color(255, 255, 255, 200));
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(2,1,10,10));
+
+        // Panel para centrar los botones y colocarlos en línea
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         buttonPanel.add(playButton);
         buttonPanel.add(exitButton);
         buttonPanel.setOpaque(false);
@@ -41,7 +40,7 @@ public class HomeScreenPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        ImageIcon back = new ImageIcon(getClass().getResource("/resources/"+ "pokemonInicio"+".PNG"));
+        ImageIcon back = new ImageIcon(getClass().getResource("/resources/" + "inicio" + ".PNG"));
         g.drawImage(back.getImage(), 0, 0, getWidth(), getHeight(), this);
     }
 }
