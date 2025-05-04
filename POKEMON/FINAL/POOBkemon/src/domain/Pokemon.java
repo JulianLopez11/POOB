@@ -1,4 +1,5 @@
 package src.domain;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -6,7 +7,7 @@ import java.util.Random;
 /**
  * Clase que representa un Pokémon con sus características y comportamientos
  */
-public class Pokemon {
+public class Pokemon implements Serializable {
     private String name;
     private final int level = 100;
     private int maxPs;

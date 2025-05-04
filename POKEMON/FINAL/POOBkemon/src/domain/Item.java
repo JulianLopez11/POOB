@@ -1,10 +1,12 @@
 package src.domain;
 
+import java.io.Serializable;
+
 /**
  * Clase abstracta que representa un ítem en el juego Pokémon
  * El tipo de ítem se determina por la clase que lo implementa
  */
-public abstract class Item {
+public abstract class Item implements Serializable {
     protected String name;
     protected String description;
     

@@ -1,8 +1,11 @@
 package src.domain;
+
+import java.io.Serializable;
+
 /**
  * Clase que representa un movimiento o ataque de Pokémon
  */
-public class Movement {
+public class Movement implements Serializable {
     private String name;
     private PokemonType type;
     private int power;

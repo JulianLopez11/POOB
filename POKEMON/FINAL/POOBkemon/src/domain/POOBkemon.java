@@ -95,6 +95,10 @@ public class POOBkemon {
         defaultMovementsMap.put(cola_hierro.getName(), cola_hierro);
     }
 
+    public void addSelectedMovementToPokemon(Movement movement, Pokemon pokemon) {
+        pokemon.addMovement(movement);
+    }
+
     /**
      * Termina el juego actual cuando un entrenador decide huir,
      * declarando como ganador al entrenador que no huyó.
@@ -139,4 +143,19 @@ public class POOBkemon {
         return null;
     }
 
+    public TreeMap<String,Pokemon> getPokedex() {
+        return pokedex;
+    }
+
+    public HashMap<String,Movement> getDefaultMovementsMap() {
+        return defaultMovementsMap;
+    }
+
+    public HashMap<String,Item> getDefaultItemsMap() {
+        return defaultItemsMap;
+    }
+
+    public void setTrainers(ArrayList<Trainer> trainers) {
+        this.trainers = trainers;
+    }
 }
