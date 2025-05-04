@@ -18,7 +18,7 @@ public class POOBkemonTest {
     
     @BeforeEach
     public void setUp() {
-        juego = new POOBkemon("Normal"); // Asumiendo que existe modo "Normal"
+        juego = new POOBkemon();
         entrenador = new Trainer("Ash");
         
         // Crear Pokémon de prueba
@@ -137,17 +137,6 @@ public class POOBkemonTest {
         assertTrue((hpAntes - hpDespues) < ember.getPower());
     }
 
-    @Test
-    public void deberiaProcesarUnTurno() {
-        
-        juego.addTrainer(entrenador);
-        Trainer oponente = new Trainer("Gary");
-        oponente.addPokemon(pokemon2);
-        juego.addTrainer(oponente);
-
-        juego.turno();
-    }
-    
     @Test
     public void deberiaUsarRevive() {
         Revive revive = new Revive();

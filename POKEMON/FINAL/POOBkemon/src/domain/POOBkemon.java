@@ -1,32 +1,31 @@
 package src.domain;
+import javax.swing.Timer.*;
 import javax.swing.*;
+import java.io.*;
 import java.util.*;
+import java.awt.event.*;
 
+/**
+ * Clase principal que gestiona el juego POOBkemon
+ * @author Julian López y Sebastian Puentes
+ * @version 1.0
+ * @since 2025-05-04
+ */
 public class POOBkemon {
-    private HashSet<Trainer> trainers; // Lista de entrenadores sin duplicados
-    private String entrenadorTurno;
-    private HashMap<String, Pokemon> pokedex;
-    private HashMap<String, Movement> defaultMovementsMap;
-    private HashMap<String, Item> defaultItemsMap;
+    private ArrayList<Trainer> trainers = new ArrayList<>();
+    private TreeMap<String, Pokemon> pokedex = new TreeMap<>();
+    private HashMap<String, Movement> defaultMovementsMap = new HashMap<>();
+    private HashMap<String, Item> defaultItemsMap = new HashMap<>();
+    private boolean gameInProgress;
+    private boolean gamePaused;
+    private boolean gameOver;
+    private int currentTrainerIndex = 0;
+    private static final int TURN_TIME_LIMIT = 20;
 
-    public POOBkemon(String modalidad) {
-        trainers = new HashSet<>();
-        pokedex = new HashMap<>();
-        defaultMovementsMap = new HashMap<>();
-        defaultItemsMap = new HashMap<>();
-        
-        // Inicializar los Pokémon, movimientos e ítems por defecto
+    public POOBkemon() {
         defaultPokemons();
-        defaultMovements();
         defaultItems();
-    }
-
-    public void turno() {
-        // Lógica para los turnos
-    }
-
-    public void start() {
-        // Iniciar juego
+        defaultMovements();
     }
 
     public void defaultPokemons() {
@@ -37,7 +36,7 @@ public class POOBkemon {
         Pokemon raichu = new Pokemon("Raichu", PokemonType.ELECTRICO);
         Pokemon gengar = new Pokemon("Gengar", PokemonType.FANTASMA, PokemonType.VENENO);
         Pokemon snorlax = new Pokemon("Snorlax", PokemonType.NORMAL);
-        
+
         pokedex.put(charizard.getName(), charizard);
         pokedex.put(blastoise.getName(), blastoise);
         pokedex.put(venusaur.getName(), venusaur);
@@ -51,10 +50,12 @@ public class POOBkemon {
         Item psPotion = new NormalPotion();
         Item superPotion = new SuperPotion();
         Item hyperPotion = new HyperPotion();
-        
+        Item revive = new Revive();
+
         defaultItemsMap.put(psPotion.getName(), psPotion);
         defaultItemsMap.put(superPotion.getName(), superPotion);
         defaultItemsMap.put(hyperPotion.getName(), hyperPotion);
+        defaultItemsMap.put(revive.getName(), revive);
     }
 
     public void defaultMovements() {
@@ -75,7 +76,7 @@ public class POOBkemon {
         Movement atizadorX = new Movement("Atizador-X", PokemonType.ELECTRICO, 80, 100, 15, "Físico");
         Movement onda_trueno = new Movement("Onda Trueno", PokemonType.ELECTRICO, 0, 90, 20, "Especial", "paralizado", 100);
         Movement cola_hierro = new Movement("Cola Hierro", PokemonType.ACERO, 100, 75, 15, "Físico");
-    
+
         defaultMovementsMap.put(lanzallamas.getName(), lanzallamas);
         defaultMovementsMap.put(golpeAereo.getName(), golpeAereo);
         defaultMovementsMap.put(giroFuego.getName(), giroFuego);
@@ -93,96 +94,49 @@ public class POOBkemon {
         defaultMovementsMap.put(onda_trueno.getName(), onda_trueno);
         defaultMovementsMap.put(cola_hierro.getName(), cola_hierro);
     }
-    
-    public void coin() throws POOBkemonException {
-        if (trainers == null || trainers.isEmpty()) {
-            throw new POOBkemonException(POOBkemonException.NO_TRAINERS_FOUND);
+
+    /**
+     * Termina el juego actual cuando un entrenador decide huir,
+     * declarando como ganador al entrenador que no huyó.
+     * @param fleeingTrainer El entrenador que decidió huir del combate
+     * @return String con el mensaje indicando el ganador
+     */
+    public String leaveGame(Trainer fleeingTrainer) {
+        String winnerMessage = "";
+        if (trainers != null && trainers.size() == 2) {
+            Trainer winner = null;
+            for (Trainer trainer : trainers) {
+                if (!trainer.equals(fleeingTrainer)) {
+                    winner = trainer;
+                    break;
+                }
+            }
+            if (winner != null) {
+                winnerMessage = "¡" + winner.getNombre() + " ha ganado el combate porque " +
+                        fleeingTrainer.getNombre() + " ha huido!";
+            }
+        } else {
+            winnerMessage = "El combate ha terminado.";
         }
-        
-        List<Trainer> trainersList = new ArrayList<>(trainers);
-        Random random = new Random();
-        int resultado = random.nextInt(trainersList.size());
-        Trainer trainerSeleccionado = trainersList.get(resultado);
-        
-        try {
-            entrenadorTurno = trainerSeleccionado.getNombre();
-            JOptionPane.showMessageDialog(null,
-                    "El entrenador que empieza es: " + entrenadorTurno,
-                    "Lanzamiento de Moneda",
-                    JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null,
-                    "Error al seleccionar el entrenador: " + e.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+        gameInProgress = false;
+        gamePaused = false;
+        gameOver = true;
+        trainers.clear();
+        pokedex.clear();
+        defaultMovementsMap.clear();
+        defaultItemsMap.clear();
+        return winnerMessage;
+    }
+
+    /**
+     * Obtiene el entrenador que está jugando actualmente su turno.
+     * @return El entrenador actualmente activo en el juego
+     */
+    public Trainer getCurrentTrainer() {
+        if (trainers != null && !trainers.isEmpty() && currentTrainerIndex >= 0 && currentTrainerIndex < trainers.size()) {
+            return trainers.get(currentTrainerIndex);
         }
+        return null;
     }
-    
-    /**
-     * Añade un entrenador al conjunto de entrenadores
-     * @param trainer Entrenador a añadir
-     * @return true si fue añadido, false si ya existía
-     */
-    public boolean addTrainer(Trainer trainer) {
-        return trainers.add(trainer);
-    }
-    
-    /**
-     * Obtiene la colección de Pokémon predefinidos
-     * @return Colección de Pokémon
-     */
-    public Collection<Pokemon> getPokedex() {
-        return pokedex.values();
-    }
-    
-    /**
-     * Obtiene un Pokémon por su nombre
-     * @param name Nombre del Pokémon
-     * @return El Pokémon si existe, null si no
-     */
-    public Pokemon getPokemonByName(String name) {
-        return pokedex.get(name);
-    }
-    
-    /**
-     * Obtiene la colección de movimientos predefinidos
-     * @return Colección de movimientos
-     */
-    public Collection<Movement> getDefaultMovements() {
-        return defaultMovementsMap.values();
-    }
-    
-    /**
-     * Obtiene un movimiento por su nombre
-     * @param name Nombre del movimiento
-     * @return El movimiento si existe, null si no
-     */
-    public Movement getMovementByName(String name) {
-        return defaultMovementsMap.get(name);
-    }
-    
-    /**
-     * Obtiene la colección de objetos predefinidos
-     * @return Colección de objetos
-     */
-    public Collection<Item> getDefaultItems() {
-        return defaultItemsMap.values();
-    }
-    
-    /**
-     * Obtiene un ítem por su nombre
-     * @param name Nombre del ítem
-     * @return El ítem si existe, null si no
-     */
-    public Item getItemByName(String name) {
-        return defaultItemsMap.get(name);
-    }
-    
-    /**
-     * Obtiene la colección de entrenadores
-     * @return Colección de entrenadores
-     */
-    public Collection<Trainer> getTrainers() {
-        return new ArrayList<>(trainers);
-    }
+
 }

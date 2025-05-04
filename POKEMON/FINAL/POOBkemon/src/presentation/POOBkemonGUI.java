@@ -18,7 +18,7 @@ public class POOBkemonGUI extends JFrame {
     private Fights fightsPanel;
 
     public POOBkemonGUI() {
-        pooBkemon = new POOBkemon("normal");
+        pooBkemon = new POOBkemon();
         prepareElements();
         prepareActions();
     }
@@ -125,6 +125,12 @@ public class POOBkemonGUI extends JFrame {
         fightsPanel.getPokemonButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 decideTurn();
+            }
+        });
+
+        fightsPanel.getRunButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                run();
             }
         });
     }
@@ -292,7 +298,14 @@ public class POOBkemonGUI extends JFrame {
         }
     }
 
-    public void closeWindow() {
+    private void run(){
+        Trainer current = pooBkemon.getCurrentTrainer();
+        String message = pooBkemon.leaveGame(current);
+        JOptionPane.showMessageDialog(this, message, "Fin del Combate", JOptionPane.INFORMATION_MESSAGE);
+        cardLayout.show(contentPanel, "INICIO");
+    }
+
+    private void closeWindow() {
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_NO_OPTION);
         JDialog dialog = optionPane.createDialog(POOBkemonGUI.this, "Confirmar Salida");
@@ -302,7 +315,7 @@ public class POOBkemonGUI extends JFrame {
         }
     }
 
-    public void exit() {
+    private void exit() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?",
                 JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
