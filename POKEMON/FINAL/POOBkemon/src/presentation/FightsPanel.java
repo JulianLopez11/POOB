@@ -2,8 +2,12 @@ package src.presentation;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
-public class Fights extends JPanel {
+/**
+ * Panel para gestionar y mostrar la batalla de Pokémon.
+ */
+public class FightsPanel extends JPanel {
     private ImageIcon background;
     private ImageIcon playerPokemon;
     private ImageIcon opponentPokemon;
@@ -12,11 +16,19 @@ public class Fights extends JPanel {
     private JButton pokemonButton;
     private JButton runButton;
 
-    // Health and info variables
+    // Equipos de jugador y oponente
+    private List<String> playerTeam;
+    private List<String> opponentTeam;
+    private int currentPlayerPokemonIndex = 0; // Índice del Pokémon actual del jugador
+    private int currentOpponentPokemonIndex = 0; // Índice del Pokémon actual del oponente
+    private boolean canChangePlayerPokemon = true; // Controla si el jugador puede cambiar de Pokémon
+    private boolean canChangeOpponentPokemon = true; // Controla si el oponente puede cambiar de Pokémon
+
+    // Salud e información de los Pokémon
     private int playerHealth = 100;
     private int opponentHealth = 100;
-    private String playerName = "Machamp";
-    private String opponentName = "Snorlax";
+    private String playerName = "";
+    private String opponentName = "";
     private int playerLevel = 100;
     private int opponentLevel = 100;
 
@@ -32,13 +44,11 @@ public class Fights extends JPanel {
     private final double TEXT_BOX_HEIGHT_RATIO = 0.083;
     private final double OPTIONS_BOX_WIDTH_RATIO = 0.5;
 
-    public Fights() {
+    public FightsPanel() {
         setLayout(null);
 
         try {
             background = new ImageIcon(getClass().getResource("/resources/batalla.png"));
-            playerPokemon = new ImageIcon(getClass().getResource("/resources/machampBack.png"));
-            opponentPokemon = new ImageIcon(getClass().getResource("/resources/snorlaxFront.png"));
         } catch (NullPointerException e) {
             System.err.println("Error: No se pudieron cargar las imágenes. Verifica las rutas.");
         }
@@ -52,6 +62,9 @@ public class Fights extends JPanel {
         add(bagButton);
         add(pokemonButton);
         add(runButton);
+
+        // Acción al presionar el botón "POKÉMON"
+        pokemonButton.addActionListener(e -> handlePokemonSelection());
     }
 
     private JButton createOptionButton(String text) {
@@ -98,7 +111,7 @@ public class Fights extends JPanel {
             g.drawImage(opponentPokemon.getImage(), opponentX, opponentY, opponentPokemonSize, opponentPokemonSize, this);
         }
 
-        // Draw health bars and names
+        // Dibujar barras de salud y nombres
         drawHealthBarWithInfo(g, playerX, playerY - 20, playerPokemonSize, playerHealth, playerName, playerLevel, Color.GREEN);
         drawHealthBarWithInfo(g, opponentX, opponentY - 20, opponentPokemonSize, opponentHealth, opponentName, opponentLevel, Color.RED);
 
@@ -110,13 +123,9 @@ public class Fights extends JPanel {
         g.setColor(new Color(0, 128, 128));
         g.fillRoundRect(0, textBoxY, panelWidth, textBoxHeight, 15, 15); // Bordes redondeados
 
-        // Sombras
-        g.setColor(new Color(0, 0, 0, 50)); // Sombra más suave
-        g.fillRoundRect(5, textBoxY + 5, panelWidth - 10, textBoxHeight - 10, 15, 15);
-
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, Math.max(12, panelWidth / 80)));
-        g.drawString("What will The ..  do?", 10, textBoxY + (textBoxHeight / 2) + 5);
+        g.drawString("What will " + playerName + " do?", 10, textBoxY + (textBoxHeight / 2) + 5);
 
         int optionsBoxWidth = (int) (panelWidth * OPTIONS_BOX_WIDTH_RATIO);
         int optionsBoxHeight = textBoxHeight;
@@ -127,32 +136,28 @@ public class Fights extends JPanel {
         g.setColor(new Color(50, 50, 50));
         g.fillRoundRect(optionsBoxX, optionsBoxY, optionsBoxWidth, optionsBoxHeight, 15, 15);
 
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, Math.max(12, panelWidth / 80)));
-        g.drawString("Options", optionsBoxX + 10, optionsBoxY + 20);
-
         repositionButtons();
     }
 
     private void drawHealthBarWithInfo(Graphics g, int x, int y, int width, int health, String name, int level, Color color) {
-        int barWidth = (int) (width * 0.8); // Width of the health bar
-        int barHeight = 10; // Height of the health bar
+        int barWidth = (int) (width * 0.8); // Ancho de la barra de salud
+        int barHeight = 10; // Altura de la barra de salud
         int filledWidth = (int) (barWidth * (health / 100.0));
 
-        // Draw name and level
+        // Dibujar nombre y nivel
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 14));
         g.drawString(name + " Lv" + level, x, y - 10);
 
-        // Draw background
+        // Fondo de la barra
         g.setColor(Color.GRAY);
         g.fillRect(x, y, barWidth, barHeight);
 
-        // Draw health
+        // Salud
         g.setColor(color);
         g.fillRect(x, y, filledWidth, barHeight);
 
-        // Draw border
+        // Borde de la barra
         g.setColor(Color.BLACK);
         g.drawRect(x, y, barWidth, barHeight);
     }
@@ -174,18 +179,10 @@ public class Fights extends JPanel {
         int buttonMarginX = 5;
         int buttonMarginY = 5;
 
-        int dynamicFontSize = Math.max(12, panelWidth / 100);
-        Font dynamicFont = new Font("Arial", Font.BOLD, dynamicFontSize);
-
         fightButton.setBounds(optionsBoxX + buttonMarginX, optionsBoxY + buttonMarginY, buttonWidth, buttonHeight);
         bagButton.setBounds(optionsBoxX + buttonWidth + 2 * buttonMarginX, optionsBoxY + buttonMarginY, buttonWidth, buttonHeight);
         pokemonButton.setBounds(optionsBoxX + buttonMarginX, optionsBoxY + buttonHeight + 2 * buttonMarginY, buttonWidth, buttonHeight);
         runButton.setBounds(optionsBoxX + buttonWidth + 2 * buttonMarginX, optionsBoxY + buttonHeight + 2 * buttonMarginY, buttonWidth, buttonHeight);
-
-        fightButton.setFont(dynamicFont);
-        bagButton.setFont(dynamicFont);
-        pokemonButton.setFont(dynamicFont);
-        runButton.setFont(dynamicFont);
     }
 
     public JButton getFightButton() {
@@ -204,18 +201,99 @@ public class Fights extends JPanel {
         return runButton;
     }
 
-    // Methods to update health
-    public void setPlayerHealth(int health) {
-        this.playerHealth = Math.max(0, Math.min(health, 100));
-        repaint();
+    /**
+     * Configura los Pokémon seleccionados del jugador en la batalla.
+     *
+     * @param playerTeam Lista de nombres de los Pokémon seleccionados por el jugador.
+     */
+    public void setPlayerTeam(List<String> playerTeam) {
+        this.playerTeam = playerTeam;
+        currentPlayerPokemonIndex = 0; // El primer Pokémon será el inicial
+        setPlayerPokemonImage("/resources/" + playerTeam.get(0).toLowerCase() + "Back.png");
+        setPlayerInfo(playerTeam.get(0), 100); // Información inicial
     }
 
-    public void setOpponentHealth(int health) {
-        this.opponentHealth = Math.max(0, Math.min(health, 100));
-        repaint();
+    /**
+     * Configura los Pokémon seleccionados del oponente en la batalla.
+     *
+     * @param opponentTeam Lista de nombres de los Pokémon seleccionados por el oponente.
+     */
+    public void setOpponentTeam(List<String> opponentTeam) {
+        this.opponentTeam = opponentTeam;
+        currentOpponentPokemonIndex = 0; // El primer Pokémon será el inicial
+        setOpponentPokemonImage("/resources/" + opponentTeam.get(0).toLowerCase() + "Front.png");
+        setOpponentInfo(opponentTeam.get(0), 100); // Información inicial
     }
 
-    // Methods to update names and levels
+    /**
+     * Maneja el evento al presionar el botón "POKÉMON".
+     */
+    private void handlePokemonSelection() {
+        Object[] options = {"Jugador", "Oponente"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "¿Quién cambiará su Pokémon?",
+                "Cambio de Pokémon",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (choice == JOptionPane.YES_OPTION) {
+            changePlayerPokemon(); // Cambiar Pokémon del jugador
+        } else if (choice == JOptionPane.NO_OPTION) {
+            changeOpponentPokemon(); // Cambiar Pokémon del oponente
+        }
+    }
+
+    private void changePlayerPokemon() {
+        if (playerTeam == null || playerTeam.isEmpty() || !canChangePlayerPokemon) {
+            JOptionPane.showMessageDialog(this, "No puedes cambiar el Pokémon del jugador en este momento.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String selectedPokemon = (String) JOptionPane.showInputDialog(
+                this,
+                "Elige tu próximo Pokémon:",
+                "Cambio de Pokémon (Jugador)",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                playerTeam.toArray(),
+                playerTeam.get(currentPlayerPokemonIndex)
+        );
+
+        if (selectedPokemon != null) {
+            currentPlayerPokemonIndex = playerTeam.indexOf(selectedPokemon);
+            setPlayerPokemonImage("/resources/" + selectedPokemon.toLowerCase() + "Back.png");
+            setPlayerInfo(selectedPokemon, 100); // Actualiza la información del Pokémon
+        }
+    }
+
+    private void changeOpponentPokemon() {
+        if (opponentTeam == null || opponentTeam.isEmpty() || !canChangeOpponentPokemon) {
+            JOptionPane.showMessageDialog(this, "No puedes cambiar el Pokémon del oponente en este momento.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String selectedPokemon = (String) JOptionPane.showInputDialog(
+                this,
+                "Elige el próximo Pokémon:",
+                "Cambio de Pokémon (Oponente)",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                opponentTeam.toArray(),
+                opponentTeam.get(currentOpponentPokemonIndex)
+        );
+
+        if (selectedPokemon != null) {
+            currentOpponentPokemonIndex = opponentTeam.indexOf(selectedPokemon);
+            setOpponentPokemonImage("/resources/" + selectedPokemon.toLowerCase() + "Front.png");
+            setOpponentInfo(selectedPokemon, 100); // Actualiza la información del Pokémon
+        }
+    }
+
     public void setPlayerInfo(String name, int level) {
         this.playerName = name;
         this.playerLevel = level;
@@ -228,7 +306,6 @@ public class Fights extends JPanel {
         repaint();
     }
 
-    // New methods to update Pokémon sprites
     public void setPlayerPokemonImage(String imagePath) {
         this.playerPokemon = new ImageIcon(getClass().getResource(imagePath));
         repaint();
@@ -237,9 +314,5 @@ public class Fights extends JPanel {
     public void setOpponentPokemonImage(String imagePath) {
         this.opponentPokemon = new ImageIcon(getClass().getResource(imagePath));
         repaint();
-    }
-
-    public ImageIcon getPlayerPokemon() {
-        return playerPokemon;
     }
 }

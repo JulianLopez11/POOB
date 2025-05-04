@@ -5,6 +5,8 @@ import src.domain.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class POOBkemonGUI extends JFrame {
 
@@ -15,7 +17,11 @@ public class POOBkemonGUI extends JFrame {
     private PlayScreenPanel playPanel;
     private PokedexPanel pokedexPanel;
     private ModePvsPPanel modePvsPPanel;
-    private Fights fightsPanel;
+    private FightsPanel fightsPanel;
+    private PokemonSelectionPanel pokemonSelectionPanel;
+
+    private List<String> availablePlayerPokemons;  // Lista de Pokémon disponibles para el jugador
+    private List<String> availableOpponentPokemons; // Lista de Pokémon disponibles para el oponente
 
     public POOBkemonGUI() {
         pooBkemon = new POOBkemon();
@@ -33,6 +39,7 @@ public class POOBkemonGUI extends JFrame {
         contentPanel = new JPanel(cardLayout);
         add(contentPanel);
 
+        // Inicializar paneles
         homePanel = new HomeScreenPanel();
         contentPanel.add(homePanel, "INICIO");
 
@@ -42,7 +49,7 @@ public class POOBkemonGUI extends JFrame {
         modePvsPPanel = new ModePvsPPanel();
         contentPanel.add(modePvsPPanel, "MODE PvsP");
 
-        fightsPanel = new Fights();
+        fightsPanel = new FightsPanel();
         fightsPanel.setLayout(null);
         contentPanel.add(fightsPanel, "BATALLA");
 
@@ -54,6 +61,12 @@ public class POOBkemonGUI extends JFrame {
         ));
         contentPanel.add(pokedexPanel, "POKEDEX");
 
+        pokemonSelectionPanel = new PokemonSelectionPanel(cardLayout, contentPanel, fightsPanel);
+        contentPanel.add(pokemonSelectionPanel, "POKEMON SELECTION");
+
+        // Inicializar listas de Pokémon disponibles
+        availablePlayerPokemons = new ArrayList<>();
+        availableOpponentPokemons = new ArrayList<>();
     }
 
     public void prepareActions() {
@@ -63,6 +76,7 @@ public class POOBkemonGUI extends JFrame {
             }
         });
 
+        // Acciones de botones principales
         homePanel.getExitButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 exit();
@@ -113,7 +127,7 @@ public class POOBkemonGUI extends JFrame {
 
         modePvsPPanel.getNormalMode().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(contentPanel, "SELECCION");
+                cardLayout.show(contentPanel, "POKEMON SELECTION");
             }
         });
 
@@ -123,192 +137,21 @@ public class POOBkemonGUI extends JFrame {
             }
         });
 
-        fightsPanel.getPokemonButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                decideTurn();
-            }
-        });
-
         fightsPanel.getRunButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 run();
             }
         });
-
-
     }
 
-    private void decideTurn() {
-        Object[] options = {"Jugador", "Oponente"};
-        int result = JOptionPane.showOptionDialog(
-                fightsPanel,
-                "¿Quién elige?",
-                "Decidir Turno",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        // Si el jugador elige primero
-        if (result == JOptionPane.YES_OPTION) {
-            handlePlayerSelection();
-        }
-        // Si el oponente elige primero
-        else if (result == JOptionPane.NO_OPTION) {
-            handleOpponentSelection();
-        }
-    }
-
-    private void handlePlayerSelection() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        JLabel label = new JLabel("Elige un Pokémon (Jugador):");
-        JComboBox<String> pokemonBox = new JComboBox<>();
-        pokemonBox.addItem("Raichu");
-        pokemonBox.addItem("Charizard");
-        pokemonBox.addItem("Venusaur");
-        pokemonBox.addItem("Blastoise");
-
-        JLabel imageLabel = new JLabel();
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        imageLabel.setPreferredSize(new Dimension(200, 200));
-
-        java.util.Map<String, String> playerPokemonImages = java.util.Map.of(
-                "Raichu", "/resources/raichuBack.png",
-                "Charizard", "/resources/charizardBack.png",
-                "Venusaur", "/resources/venusaurBack.png",
-                "Blastoise", "/resources/blastoiseBack.png"
-        );
-
-        pokemonBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    String selectedPokemon = (String) event.getItem();
-                    String imagePath = playerPokemonImages.get(selectedPokemon);
-                    if (imagePath != null) {
-                        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
-                        imageLabel.setIcon(icon);
-                    }
-                }
-            }
-        });
-
-        String defaultPokemon = (String) pokemonBox.getSelectedItem();
-        String defaultImagePath = playerPokemonImages.get(defaultPokemon);
-        if (defaultImagePath != null) {
-            ImageIcon icon = new ImageIcon(getClass().getResource(defaultImagePath));
-            imageLabel.setIcon(icon);
-        }
-
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(pokemonBox, BorderLayout.CENTER);
-        panel.add(imageLabel, BorderLayout.SOUTH);
-
-        Object[] options = {"Aceptar", "Volver"};
-
-        int result = JOptionPane.showOptionDialog(
-                fightsPanel,
-                panel,
-                "Seleccionar Pokémon del Jugador",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        if (result == JOptionPane.YES_OPTION) {
-            String selectedPokemon = (String) pokemonBox.getSelectedItem();
-            String selectedImagePath = playerPokemonImages.get(selectedPokemon);
-
-            if (selectedImagePath != null) {
-                fightsPanel.setPlayerPokemonImage(selectedImagePath);
-                fightsPanel.setPlayerInfo(selectedPokemon, 100); // Nivel por defecto
-            }
-
-            JOptionPane.showMessageDialog(fightsPanel, "Jugador Elige a: " + selectedPokemon);
-        }
-    }
-
-    private void handleOpponentSelection() {
-        JPanel panel = new JPanel(new BorderLayout(10, 10));
-        JLabel label = new JLabel("Elige un Pokémon (Oponente):");
-        JComboBox<String> pokemonBox = new JComboBox<>();
-        pokemonBox.addItem("Raichu");
-        pokemonBox.addItem("Charizard");
-        pokemonBox.addItem("Venusaur");
-        pokemonBox.addItem("Blastoise");
-
-        JLabel imageLabel = new JLabel();
-        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        imageLabel.setPreferredSize(new Dimension(200, 200));
-
-        java.util.Map<String, String> opponentPokemonImages = java.util.Map.of(
-                "Raichu", "/resources/raichuFront.png",
-                "Charizard", "/resources/charizardFront.png",
-                "Venusaur", "/resources/venusaurFront.png",
-                "Blastoise", "/resources/blastoiseFront.png"
-        );
-
-        pokemonBox.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent event) {
-                if (event.getStateChange() == ItemEvent.SELECTED) {
-                    String selectedPokemon = (String) event.getItem();
-                    String imagePath = opponentPokemonImages.get(selectedPokemon);
-                    if (imagePath != null) {
-                        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
-                        imageLabel.setIcon(icon);
-                    }
-                }
-            }
-        });
-
-        String defaultPokemon = (String) pokemonBox.getSelectedItem();
-        String defaultImagePath = opponentPokemonImages.get(defaultPokemon);
-        if (defaultImagePath != null) {
-            ImageIcon icon = new ImageIcon(getClass().getResource(defaultImagePath));
-            imageLabel.setIcon(icon);
-        }
-
-        panel.add(label, BorderLayout.NORTH);
-        panel.add(pokemonBox, BorderLayout.CENTER);
-        panel.add(imageLabel, BorderLayout.SOUTH);
-
-        Object[] options = {"Aceptar", "Volver"};
-
-        int result = JOptionPane.showOptionDialog(
-                fightsPanel,
-                panel,
-                "Seleccionar Pokémon del Oponente",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        if (result == JOptionPane.YES_OPTION) {
-            String selectedPokemon = (String) pokemonBox.getSelectedItem();
-            String selectedImagePath = opponentPokemonImages.get(selectedPokemon);
-
-            if (selectedImagePath != null) {
-                fightsPanel.setOpponentPokemonImage(selectedImagePath);
-                fightsPanel.setOpponentInfo(selectedPokemon, 100); // Nivel por defecto
-            }
-
-            JOptionPane.showMessageDialog(fightsPanel, "El oponente eligió a: " + selectedPokemon);
-        }
-    }
-
-    private void run(){
+    private void run() {
         Trainer current = pooBkemon.getCurrentTrainer();
         String message = pooBkemon.leaveGame(current);
         JOptionPane.showMessageDialog(this, message, "Fin del Combate", JOptionPane.INFORMATION_MESSAGE);
         cardLayout.show(contentPanel, "INICIO");
     }
 
-    private void closeWindow() {
+    public void closeWindow() {
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_NO_OPTION);
         JDialog dialog = optionPane.createDialog(POOBkemonGUI.this, "Confirmar Salida");
@@ -318,7 +161,7 @@ public class POOBkemonGUI extends JFrame {
         }
     }
 
-    private void exit() {
+    public void exit() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?",
                 JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
