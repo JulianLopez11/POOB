@@ -121,6 +121,7 @@ public class PokedexPanel extends JPanel {
         return backButton;
     }
 
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

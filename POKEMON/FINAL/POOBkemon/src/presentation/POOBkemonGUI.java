@@ -6,7 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class POOBkemonGUI extends JFrame{
+public class POOBkemonGUI extends JFrame {
 
     private POOBkemon pooBkemon;
     private JPanel contentPanel;
@@ -17,7 +17,7 @@ public class POOBkemonGUI extends JFrame{
     private ModePvsPPanel modePvsPPanel;
     private Fights fightsPanel;
 
-    public POOBkemonGUI(){
+    public POOBkemonGUI() {
         pooBkemon = new POOBkemon("normal");
         prepareElements();
         prepareActions();
@@ -43,6 +43,7 @@ public class POOBkemonGUI extends JFrame{
         contentPanel.add(modePvsPPanel, "MODE PvsP");
 
         fightsPanel = new Fights();
+        fightsPanel.setLayout(null);
         contentPanel.add(fightsPanel, "BATALLA");
 
         pokedexPanel = new PokedexPanel(java.util.List.of(
@@ -52,7 +53,6 @@ public class POOBkemonGUI extends JFrame{
                 "/resources/venusaurFront.png"
         ));
         contentPanel.add(pokedexPanel, "POKEDEX");
-
     }
 
     public void prepareActions() {
@@ -92,9 +92,10 @@ public class POOBkemonGUI extends JFrame{
             }
         });
 
-        //Batalla
         playPanel.getMVsMButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {cardLayout.show(contentPanel, "BATALLA");}
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "BATALLA");
+            }
         });
 
         modePvsPPanel.getBackButton().addActionListener(new ActionListener() {
@@ -103,9 +104,10 @@ public class POOBkemonGUI extends JFrame{
             }
         });
 
-        //Batalla
         modePvsPPanel.getSurvivalMode().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {cardLayout.show(contentPanel, "BATALLA");}
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "BATALLA");
+            }
         });
 
         modePvsPPanel.getNormalMode().addActionListener(new ActionListener() {
@@ -120,11 +122,177 @@ public class POOBkemonGUI extends JFrame{
             }
         });
 
-
-
+        fightsPanel.getPokemonButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                decideTurn();
+            }
+        });
     }
 
-    public void closeWindow(){
+    private void decideTurn() {
+        Object[] options = {"Jugador", "Oponente"};
+        int result = JOptionPane.showOptionDialog(
+                fightsPanel,
+                "¿Quién elige?",
+                "Decidir Turno",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        // Si el jugador elige primero
+        if (result == JOptionPane.YES_OPTION) {
+            handlePlayerSelection();
+        }
+        // Si el oponente elige primero
+        else if (result == JOptionPane.NO_OPTION) {
+            handleOpponentSelection();
+        }
+    }
+
+    private void handlePlayerSelection() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        JLabel label = new JLabel("Elige un Pokémon (Jugador):");
+        JComboBox<String> pokemonBox = new JComboBox<>();
+        pokemonBox.addItem("Raichu");
+        pokemonBox.addItem("Charizard");
+        pokemonBox.addItem("Venusaur");
+        pokemonBox.addItem("Blastoise");
+
+        JLabel imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setPreferredSize(new Dimension(200, 200));
+
+        java.util.Map<String, String> playerPokemonImages = java.util.Map.of(
+                "Raichu", "/resources/raichuBack.png",
+                "Charizard", "/resources/charizardBack.png",
+                "Venusaur", "/resources/venusaurBack.png",
+                "Blastoise", "/resources/blastoiseBack.png"
+        );
+
+        pokemonBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                if (event.getStateChange() == ItemEvent.SELECTED) {
+                    String selectedPokemon = (String) event.getItem();
+                    String imagePath = playerPokemonImages.get(selectedPokemon);
+                    if (imagePath != null) {
+                        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+                        imageLabel.setIcon(icon);
+                    }
+                }
+            }
+        });
+
+        String defaultPokemon = (String) pokemonBox.getSelectedItem();
+        String defaultImagePath = playerPokemonImages.get(defaultPokemon);
+        if (defaultImagePath != null) {
+            ImageIcon icon = new ImageIcon(getClass().getResource(defaultImagePath));
+            imageLabel.setIcon(icon);
+        }
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(pokemonBox, BorderLayout.CENTER);
+        panel.add(imageLabel, BorderLayout.SOUTH);
+
+        Object[] options = {"Aceptar", "Volver"};
+
+        int result = JOptionPane.showOptionDialog(
+                fightsPanel,
+                panel,
+                "Seleccionar Pokémon del Jugador",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (result == JOptionPane.YES_OPTION) {
+            String selectedPokemon = (String) pokemonBox.getSelectedItem();
+            String selectedImagePath = playerPokemonImages.get(selectedPokemon);
+
+            if (selectedImagePath != null) {
+                fightsPanel.setPlayerPokemonImage(selectedImagePath);
+                fightsPanel.setPlayerInfo(selectedPokemon, 100); // Nivel por defecto
+            }
+
+            JOptionPane.showMessageDialog(fightsPanel, "Jugador Elige a: " + selectedPokemon);
+        }
+    }
+
+    private void handleOpponentSelection() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        JLabel label = new JLabel("Elige un Pokémon (Oponente):");
+        JComboBox<String> pokemonBox = new JComboBox<>();
+        pokemonBox.addItem("Raichu");
+        pokemonBox.addItem("Charizard");
+        pokemonBox.addItem("Venusaur");
+        pokemonBox.addItem("Blastoise");
+
+        JLabel imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setPreferredSize(new Dimension(200, 200));
+
+        java.util.Map<String, String> opponentPokemonImages = java.util.Map.of(
+                "Raichu", "/resources/raichuFront.png",
+                "Charizard", "/resources/charizardFront.png",
+                "Venusaur", "/resources/venusaurFront.png",
+                "Blastoise", "/resources/blastoiseFront.png"
+        );
+
+        pokemonBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent event) {
+                if (event.getStateChange() == ItemEvent.SELECTED) {
+                    String selectedPokemon = (String) event.getItem();
+                    String imagePath = opponentPokemonImages.get(selectedPokemon);
+                    if (imagePath != null) {
+                        ImageIcon icon = new ImageIcon(getClass().getResource(imagePath));
+                        imageLabel.setIcon(icon);
+                    }
+                }
+            }
+        });
+
+        String defaultPokemon = (String) pokemonBox.getSelectedItem();
+        String defaultImagePath = opponentPokemonImages.get(defaultPokemon);
+        if (defaultImagePath != null) {
+            ImageIcon icon = new ImageIcon(getClass().getResource(defaultImagePath));
+            imageLabel.setIcon(icon);
+        }
+
+        panel.add(label, BorderLayout.NORTH);
+        panel.add(pokemonBox, BorderLayout.CENTER);
+        panel.add(imageLabel, BorderLayout.SOUTH);
+
+        Object[] options = {"Aceptar", "Volver"};
+
+        int result = JOptionPane.showOptionDialog(
+                fightsPanel,
+                panel,
+                "Seleccionar Pokémon del Oponente",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        if (result == JOptionPane.YES_OPTION) {
+            String selectedPokemon = (String) pokemonBox.getSelectedItem();
+            String selectedImagePath = opponentPokemonImages.get(selectedPokemon);
+
+            if (selectedImagePath != null) {
+                fightsPanel.setOpponentPokemonImage(selectedImagePath);
+                fightsPanel.setOpponentInfo(selectedPokemon, 100); // Nivel por defecto
+            }
+
+            JOptionPane.showMessageDialog(fightsPanel, "El oponente eligió a: " + selectedPokemon);
+        }
+    }
+
+    public void closeWindow() {
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?", JOptionPane.QUESTION_MESSAGE,
                 JOptionPane.YES_NO_OPTION);
         JDialog dialog = optionPane.createDialog(POOBkemonGUI.this, "Confirmar Salida");
@@ -134,7 +302,7 @@ public class POOBkemonGUI extends JFrame{
         }
     }
 
-    public void exit(){
+    public void exit() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         JOptionPane optionPane = new JOptionPane("¿Estás seguro de que quieres salir?",
                 JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
