@@ -36,6 +36,14 @@ public class POOBkemon {
         Pokemon raichu = new Pokemon("Raichu", PokemonType.ELECTRICO);
         Pokemon gengar = new Pokemon("Gengar", PokemonType.FANTASMA, PokemonType.VENENO);
         Pokemon snorlax = new Pokemon("Snorlax", PokemonType.NORMAL);
+        Pokemon delibird = new Pokemon("Delibird", PokemonType.HIELO, PokemonType.NORMAL);
+        Pokemon donphan = new Pokemon("Donphan", PokemonType.TIERRA);
+        Pokemon dragonite = new Pokemon("Dragonite", PokemonType.DRAGON, PokemonType.VOLADOR);
+        Pokemon gardevoir = new Pokemon("Gardevoir", PokemonType.PSIQUICO, PokemonType.HADA);
+        Pokemon machamp = new Pokemon("Machamp", PokemonType.LUCHA);
+        Pokemon metagross = new Pokemon("Metagross", PokemonType.PSIQUICO);
+        Pokemon togetic = new Pokemon("Togetic", PokemonType.HADA, PokemonType.VOLADOR);
+        Pokemon tyranitar = new Pokemon("Tyranitar", PokemonType.ROCA);
 
         pokedex.put(charizard.getName(), charizard);
         pokedex.put(blastoise.getName(), blastoise);
@@ -43,6 +51,17 @@ public class POOBkemon {
         pokedex.put(raichu.getName(), raichu);
         pokedex.put(gengar.getName(), gengar);
         pokedex.put(snorlax.getName(), snorlax);
+        pokedex.put(delibird.getName(), delibird);
+        pokedex.put(donphan.getName(), donphan);
+        pokedex.put(dragonite.getName(), dragonite);
+        pokedex.put(gardevoir.getName(), gardevoir);
+        pokedex.put(machamp.getName(), machamp);
+        pokedex.put(metagross.getName(), metagross);
+        pokedex.put(togetic.getName(), togetic);
+        pokedex.put(tyranitar.getName(), tyranitar);
+
+
+
     }
 
     public void defaultItems() {
@@ -51,7 +70,6 @@ public class POOBkemon {
         Item superPotion = new SuperPotion();
         Item hyperPotion = new HyperPotion();
         Item revive = new Revive();
-
         defaultItemsMap.put(psPotion.getName(), psPotion);
         defaultItemsMap.put(superPotion.getName(), superPotion);
         defaultItemsMap.put(hyperPotion.getName(), hyperPotion);
@@ -149,5 +167,17 @@ public class POOBkemon {
             return trainers.get(currentTrainerIndex);
         }
         return null;
+    }
+
+    public TreeMap<String, Pokemon> getPokedex() {
+        return pokedex;
+    }
+
+    public HashMap<String, Movement> getDefaultMovementsMap() {
+        return defaultMovementsMap;
+    }
+
+    public HashMap<String, Item> getDefaultItemsMap() {
+        return defaultItemsMap;
     }
 }

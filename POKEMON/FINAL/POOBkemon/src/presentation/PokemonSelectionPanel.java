@@ -1,148 +1,316 @@
 package src.presentation;
 
+import src.domain.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Panel para seleccionar los Pokémon para la formación de equipo.
+ * Panel para seleccionar los Pokémon y asignar movimientos por turnos.
  */
 public class PokemonSelectionPanel extends JPanel {
 
-    private final List<String> availablePokemons;
-    private final List<String> selectedPokemons;
-    private final JButton confirmButton;
-    private final JList<String> availableList;
-    private final JList<String> selectedList;
-    private final CardLayout cardLayout;
-    private final JPanel contentPanel;
-    private final FightsPanel fightsPanel;
+    private final JComboBox<String> pokemonComboBox; // Lista desplegable de Pokémon
+    private final JComboBox<String> movementComboBox; // Lista desplegable de movimientos
+    private final DefaultListModel<String> assignedMovementsListModel; // Modelo para movimientos asignados
+    private final JList<String> assignedMovementsList; // Lista de movimientos asignados
+    private final JTextArea pokemonInfoArea; // Área para mostrar información del Pokémon seleccionado
+    private final List<String> playerPokemons; // Lista de Pokémon seleccionados para el jugador
+    private final List<String> opponentPokemons; // Lista de Pokémon seleccionados para el oponente
+    private final Map<String, Pokemon> pokedex; // Mapa de Pokémon disponibles
+    private final Map<String, Movement> defaultMovementsMap; // Mapa de movimientos predeterminados
+    private Pokemon selectedPokemon; // Pokémon actualmente seleccionado
+    private boolean isPlayerTurn = true; // Controla si es el turno del jugador
+    private final CardLayout cardLayout; // CardLayout para cambiar entre paneles
+    private final JPanel contentPanel; // Panel principal que contiene todos los subpaneles
+    private final FightsPanel fightsPanel; // Panel de batalla
+    private final int MIN_POKEMON = 1; // Mínimo número de Pokémon
+    private final int MAX_POKEMON = 6; // Máximo número de Pokémon
+    private JButton confirmPokemonsButton; // Botón para confirmar todos los Pokémon seleccionados
 
-    private boolean isPlayerSelecting;
-    private List<String> playerTeam;
-    private List<String> opponentTeam;
-
-    public PokemonSelectionPanel(CardLayout cardLayout, JPanel contentPanel, FightsPanel fightsPanel) {
+    public PokemonSelectionPanel(Map<String, Pokemon> pokedex, Map<String, Movement> defaultMovementsMap, CardLayout cardLayout, JPanel contentPanel, FightsPanel fightsPanel) {
+        this.pokedex = pokedex;
+        this.defaultMovementsMap = defaultMovementsMap;
+        this.playerPokemons = new ArrayList<>();
+        this.opponentPokemons = new ArrayList<>();
         this.cardLayout = cardLayout;
         this.contentPanel = contentPanel;
         this.fightsPanel = fightsPanel;
 
         setLayout(new BorderLayout());
 
-        availablePokemons = new ArrayList<>(List.of(
-                "Raichu", "Charizard", "Venusaur", "Blastoise",
-                "Delibird", "Donphan", "Dragonite", "Gardevoir",
-                "Gengar", "Machamp", "Metagross", "Snorlax",
-                "Togetic", "Tyranitar"
-        ));
+        // Componentes para seleccionar Pokémon
+        pokemonComboBox = new JComboBox<>();
+        JPanel pokemonPanel = new JPanel(new FlowLayout());
+        pokemonPanel.add(new JLabel("Selecciona un Pokémon:"));
+        pokemonPanel.add(pokemonComboBox);
 
-        selectedPokemons = new ArrayList<>();
-        playerTeam = new ArrayList<>();
-        opponentTeam = new ArrayList<>();
-        isPlayerSelecting = true;
+        // Área para mostrar información del Pokémon
+        pokemonInfoArea = new JTextArea(10, 30);
+        pokemonInfoArea.setEditable(false);
+        pokemonInfoArea.setBorder(BorderFactory.createTitledBorder("Información del Pokémon"));
 
-        JLabel titleLabel = new JLabel("Selecciona tu equipo Pokémon (Jugador)", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        add(titleLabel, BorderLayout.NORTH);
+        // Componentes para asignar movimientos
+        movementComboBox = new JComboBox<>();
+        assignedMovementsListModel = new DefaultListModel<>();
+        assignedMovementsList = new JList<>(assignedMovementsListModel);
 
-        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel movementsPanel = new JPanel(new GridLayout(1, 2));
+        movementsPanel.setBorder(BorderFactory.createTitledBorder("Movimientos del Pokémon"));
+        movementsPanel.add(new JScrollPane(assignedMovementsList));
+        movementsPanel.add(movementComboBox);
 
-        availableList = new JList<>(new DefaultListModel<>());
-        selectedList = new JList<>(new DefaultListModel<>());
-
-        fillAvailableList();
-
-        availableList.setBorder(BorderFactory.createTitledBorder("Pokémon Disponibles"));
-        selectedList.setBorder(BorderFactory.createTitledBorder("Tu Equipo (Max 6)"));
-
-        centerPanel.add(new JScrollPane(availableList));
-        centerPanel.add(new JScrollPane(selectedList));
-
-        add(centerPanel, BorderLayout.CENTER);
-
+        // Botones para añadir/quitar movimientos
         JPanel buttonPanel = new JPanel(new FlowLayout());
+        JButton addMovementButton = new JButton("Añadir Movimiento");
+        JButton removeMovementButton = new JButton("Quitar Movimiento");
+        JButton confirmPokemonButton = new JButton("Confirmar Pokémon");
+        confirmPokemonsButton = new JButton("Confirmar Selección"); // Botón para confirmar todos los Pokémon
+        JButton startBattleButton = new JButton("Iniciar Batalla"); // Botón para iniciar la batalla
+        buttonPanel.add(addMovementButton);
+        buttonPanel.add(removeMovementButton);
+        buttonPanel.add(confirmPokemonButton);
+        buttonPanel.add(confirmPokemonsButton); // Añadir el botón de confirmar selección
+        buttonPanel.add(startBattleButton);
 
-        JButton addButton = new JButton("Añadir →");
-        JButton removeButton = new JButton("← Quitar");
-        confirmButton = new JButton("Confirmar");
-
-        addButton.addActionListener(e -> addPokemonToTeam());
-        removeButton.addActionListener(e -> removePokemonFromTeam());
-        confirmButton.addActionListener(e -> confirmSelection(titleLabel));
-
-        buttonPanel.add(addButton);
-        buttonPanel.add(removeButton);
-        buttonPanel.add(confirmButton);
-
+        // Añadir componentes al panel principal
+        add(pokemonPanel, BorderLayout.NORTH);
+        add(pokemonInfoArea, BorderLayout.WEST); // Área de información a la izquierda
+        add(movementsPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
+
+        // Listeners
+        pokemonComboBox.addActionListener(e -> onPokemonSelected());
+        addMovementButton.addActionListener(e -> addMovement());
+        removeMovementButton.addActionListener(e -> removeMovement());
+        confirmPokemonButton.addActionListener(e -> confirmPokemon());
+        confirmPokemonsButton.addActionListener(e -> confirmAllPokemons());
+        startBattleButton.addActionListener(e -> startBattle()); // Listener para el botón de iniciar batalla
+
+        // Inicializar la lista de Pokémon en el ComboBox
+        updatePokemonComboBox();
+        updateTurnIndicator(); // Actualizar las instrucciones del turno inicial
     }
 
-    private void fillAvailableList() {
-        DefaultListModel<String> model = (DefaultListModel<String>) availableList.getModel();
-        model.clear();
-        availablePokemons.forEach(model::addElement);
-    }
-
-    private void addPokemonToTeam() {
-        String selected = availableList.getSelectedValue();
-        if (selected != null && selectedPokemons.size() < 6) {
-            availablePokemons.remove(selected);
-            selectedPokemons.add(selected);
-            refreshLists();
+    private void updatePokemonComboBox() {
+        pokemonComboBox.removeAllItems();
+        for (String pokemonName : pokedex.keySet()) {
+            pokemonComboBox.addItem(pokemonName);
         }
     }
 
-    private void removePokemonFromTeam() {
-        String selected = selectedList.getSelectedValue();
-        if (selected != null) {
-            selectedPokemons.remove(selected);
-            availablePokemons.add(selected);
-            refreshLists();
+    private void onPokemonSelected() {
+        String selectedPokemonName = (String) pokemonComboBox.getSelectedItem();
+        if (selectedPokemonName != null) {
+            selectedPokemon = pokedex.get(selectedPokemonName);
+            updatePokemonInfoArea();
+            updateMovementComboBox();
+            updateAssignedMovementsList();
         }
     }
 
-    private void refreshLists() {
-        fillAvailableList();
-        DefaultListModel<String> selectedModel = (DefaultListModel<String>) selectedList.getModel();
-        selectedModel.clear();
-        selectedPokemons.forEach(selectedModel::addElement);
+    private void updatePokemonInfoArea() {
+        if (selectedPokemon != null) {
+            StringBuilder info = new StringBuilder();
+            info.append("Nombre: ").append(selectedPokemon.getName()).append("\n");
+            info.append("Tipo Principal: ").append(selectedPokemon.getPrincipalType()).append("\n");
+            if (selectedPokemon.getSecondaryType() != null) {
+                info.append("Tipo Secundario: ").append(selectedPokemon.getSecondaryType()).append("\n");
+            }
+            info.append("Movimientos:\n");
+            for (Movement movement : selectedPokemon.getMovements()) {
+                info.append(" - ").append(movement.getName()).append("\n");
+            }
+            pokemonInfoArea.setText(info.toString());
+        } else {
+            pokemonInfoArea.setText("Selecciona un Pokémon para ver su información.");
+        }
     }
 
-    private void confirmSelection(JLabel titleLabel) {
-        if (selectedPokemons.size() <= 6) {
-            if (isPlayerSelecting) {
-                playerTeam = new ArrayList<>(selectedPokemons);
-                fightsPanel.setPlayerTeam(playerTeam);
+    private void updateMovementComboBox() {
+        movementComboBox.removeAllItems();
+        // Hacer que todos los movimientos estén disponibles para cualquier Pokémon
+        for (String movementName : defaultMovementsMap.keySet()) {
+            movementComboBox.addItem(movementName);
+        }
+    }
 
-                fightsPanel.setPlayerPokemonImage("/resources/" + playerTeam.get(0).toLowerCase() + "Back.png");
-                fightsPanel.setPlayerInfo(playerTeam.get(0), 100);
+    private void updateAssignedMovementsList() {
+        assignedMovementsListModel.clear();
+        if (selectedPokemon != null) {
+            for (Movement movement : selectedPokemon.getMovements()) {
+                assignedMovementsListModel.addElement(movement.getName());
+            }
+        }
+    }
 
-                isPlayerSelecting = false;
-                selectedPokemons.clear();
-                availablePokemons.addAll(playerTeam);
-                refreshLists();
-                titleLabel.setText("Selecciona tu equipo Pokémon (Oponente)");
+    private void addMovement() {
+        if (selectedPokemon != null && movementComboBox.getSelectedItem() != null) {
+            String movementName = (String) movementComboBox.getSelectedItem();
+            Movement movement = defaultMovementsMap.get(movementName);
 
+            // Verificar si el movimiento ya está asignado al Pokémon
+            boolean alreadyAssigned = selectedPokemon.getMovements().stream()
+                    .anyMatch(existingMovement -> existingMovement.getName().equals(movementName));
+
+            if (alreadyAssigned) {
+                JOptionPane.showMessageDialog(this,
+                        "El movimiento '" + movementName + "' ya está asignado a este Pokémon.",
+                        "Movimiento Duplicado", JOptionPane.WARNING_MESSAGE);
+                return; // Detener si el movimiento ya está asignado
+            }
+
+            // Intentar añadir el movimiento
+            if (selectedPokemon.addMovement(movement)) {
+                updateAssignedMovementsList();
             } else {
-                opponentTeam = new ArrayList<>(selectedPokemons);
-                fightsPanel.setOpponentTeam(opponentTeam);
-
-                fightsPanel.setOpponentPokemonImage("/resources/" + opponentTeam.get(0).toLowerCase() + "Front.png");
-                fightsPanel.setOpponentInfo(opponentTeam.get(0), 100);
-
-                cardLayout.show(contentPanel, "BATALLA");
+                JOptionPane.showMessageDialog(this,
+                        "Un Pokémon no puede tener más de 4 movimientos.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Debes seleccionar exactamente 6 Pokémon.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Selecciona un movimiento para añadir.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    public List<String> getSelectedPokemons() {
-        return new ArrayList<>(selectedPokemons);
+    private void removeMovement() {
+        if (selectedPokemon != null && assignedMovementsList.getSelectedValue() != null) {
+            String movementName = assignedMovementsList.getSelectedValue();
+
+            // Eliminar el movimiento del Pokémon
+            selectedPokemon.getMovements().removeIf(movement -> movement.getName().equals(movementName));
+
+            // Eliminar el movimiento de la lista visible
+            assignedMovementsListModel.removeElement(movementName);
+
+            // Mostrar mensaje de confirmación
+            JOptionPane.showMessageDialog(this,
+                    "El movimiento '" + movementName + "' ha sido eliminado del Pokémon.",
+                    "Movimiento Eliminado", JOptionPane.INFORMATION_MESSAGE);
+
+            // Verificar si ya no tiene movimientos
+            if (selectedPokemon.getMovements().isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "Este Pokémon ya no tiene movimientos asignados. No se puede confirmar hasta asignar al menos uno.",
+                        "Sin movimientos", JOptionPane.WARNING_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Por favor selecciona un movimiento para eliminar.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    public JButton getConfirmButton() {
-        return confirmButton;
+
+    private void confirmPokemon() {
+        if (selectedPokemon != null) {
+            // Validar que el Pokémon tenga al menos un movimiento asignado
+            if (selectedPokemon.getMovements() == null || selectedPokemon.getMovements().isEmpty()) {
+                JOptionPane.showMessageDialog(this,
+                        "No puedes confirmar un Pokémon sin movimientos asignados.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return; // Detener si no tiene movimientos
+            }
+
+            // Mostrar en consola los movimientos asignados (para depuración)
+            System.out.println("Movimientos del Pokémon antes de confirmar: " + selectedPokemon.getMovements().size());
+
+            // Añadir el Pokémon al equipo correspondiente según el turno
+            if (isPlayerTurn) {
+                playerPokemons.add(selectedPokemon.getName());
+                JOptionPane.showMessageDialog(this,
+                        "Pokémon asignado al jugador: " + selectedPokemon.getName(),
+                        "Confirmación", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                opponentPokemons.add(selectedPokemon.getName());
+                JOptionPane.showMessageDialog(this,
+                        "Pokémon asignado al oponente: " + selectedPokemon.getName(),
+                        "Confirmación", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            // Limpiar los movimientos del Pokémon confirmado
+            selectedPokemon.getMovements().clear();
+            updateAssignedMovementsList();
+
+            // Limpiar la selección del Pokémon actual para evitar errores
+            selectedPokemon = null;
+
+            // Actualizar el indicador de turno para el siguiente jugador
+            updateTurnIndicator();
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Selecciona un Pokémon para confirmar.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+    private void confirmAllPokemons() {
+        if (isPlayerTurn && playerPokemons.size() >= MIN_POKEMON && playerPokemons.size() <= MAX_POKEMON) {
+            JOptionPane.showMessageDialog(this,
+                    "Turno del oponente. El jugador ha terminado su selección.",
+                    "Cambio de Turno", JOptionPane.INFORMATION_MESSAGE);
+            isPlayerTurn = false; // Cambiar al turno del oponente
+            resetForOpponentSelection();
+        } else if (!isPlayerTurn && opponentPokemons.size() >= MIN_POKEMON && opponentPokemons.size() <= MAX_POKEMON) {
+            JOptionPane.showMessageDialog(this,
+                    "Ambos jugadores han terminado de seleccionar sus Pokémon. ¡Presiona 'Iniciar Batalla' para continuar!",
+                    "Selección Completa", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Debes seleccionar entre " + MIN_POKEMON + " y " + MAX_POKEMON + " Pokémon antes de confirmar.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void resetForOpponentSelection() {
+        opponentPokemons.clear(); // Preparar la lista para el oponente
+        updateTurnIndicator();
+        updatePokemonComboBox(); // Reiniciar el ComboBox para el oponente
+        selectedPokemon = null; // Reiniciar la selección actual
+        updateAssignedMovementsList();
+        pokemonInfoArea.setText(""); // Limpiar el área de información
+    }
+
+    private void updateTurnIndicator() {
+        if (isPlayerTurn) {
+            pokemonInfoArea.setBorder(BorderFactory.createTitledBorder("Turno del Jugador"));
+        } else {
+            pokemonInfoArea.setBorder(BorderFactory.createTitledBorder("Turno del Oponente"));
+        }
+    }
+
+    private void startBattle() {
+        if (playerPokemons.size() < MIN_POKEMON || opponentPokemons.size() < MIN_POKEMON) {
+            JOptionPane.showMessageDialog(this,
+                    "Ambos jugadores deben seleccionar al menos " + MIN_POKEMON + " Pokémon antes de iniciar la batalla.",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Configurar los equipos en el FightsPanel
+        fightsPanel.setPlayerTeam(playerPokemons);
+        fightsPanel.setOpponentTeam(opponentPokemons);
+
+        // Mostrar mensaje de inicio de batalla
+        JOptionPane.showMessageDialog(contentPanel,
+                "¡La batalla ha comenzado! Prepárate para luchar.",
+                "Inicio de Batalla", JOptionPane.INFORMATION_MESSAGE);
+
+        // Cambiar al panel de batalla
+        cardLayout.show(contentPanel, "BATALLA");
+    }
+
+    public List<String> getPlayerPokemons() {
+        return playerPokemons;
+    }
+
+    public List<String> getOpponentPokemons() {
+        return opponentPokemons;
     }
 }
