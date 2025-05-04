@@ -142,6 +142,8 @@ public class Movement implements Serializable {
         return effectProbability;
     }
 
+
+
     public double getMultiplicator(PokemonType attackerType, PokemonType defenderType) {
         double multiplicator = TypeEffectiveness.getEffectiveness(attackerType, defenderType);
         return multiplicator;

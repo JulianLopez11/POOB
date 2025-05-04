@@ -53,14 +53,9 @@ public class Pokemon implements Serializable {
      * Calcula el daño que este Pokémon puede hacer a otro y aplica posibles efectos secundarios
      *
      * @param target        Pokémon objetivo del ataque
-     * @param movementIndex Índice del movimiento a utilizar
      * @return Cantidad de daño calculado
      */
-    public int attack(Pokemon target, int movementIndex) {
-        if (movementIndex < 0 || movementIndex >= movements.size()) {
-            return 0;
-        }
-        Movement movement = movements.get(movementIndex);
+    public int attack(Pokemon target, Movement movement){
         if (!movement.use()) {
             System.out.println("No quedan PP para este movimiento!");
             return 0;
@@ -71,7 +66,7 @@ public class Pokemon implements Serializable {
             return 0;
         }
         double typeEffectiveness = TypeEffectiveness.getTotalEffectiveness(
-                getMovementType(movementIndex),
+                getMovementType(movement),
                 target.getPrincipalType(),
                 target.getSecondaryType()
         );
@@ -89,7 +84,7 @@ public class Pokemon implements Serializable {
         double randomFactor = 0.85 + (random.nextDouble() * 0.15);
         // Bono STAB (Same Type Attack Bonus)
         double stab = 1.0;
-        PokemonType movementType = getMovementType(movementIndex);
+        PokemonType movementType = getMovementType(movement);
         if (movementType.equals(this.principalType) ||
                 (secondaryType != null && movementType.equals(this.secondaryType))) {
             stab = 1.5;
@@ -161,14 +156,11 @@ public class Pokemon implements Serializable {
     /**
      * Obtiene el tipo de un movimiento específico
      *
-     * @param movementIndex Índice del movimiento
+     * @param
      * @return Tipo del movimiento
      */
-    private PokemonType getMovementType(int movementIndex) {
-        if (movementIndex >= 0 && movementIndex < movements.size()) {
-            return movements.get(movementIndex).getType();
-        }
-        return principalType;
+    private PokemonType getMovementType(Movement movement) {
+        return movement.getType();
     }
 
     /**
@@ -343,6 +335,16 @@ public class Pokemon implements Serializable {
         return name + " (Nivel " + level + ") - PS: " + currentPs + "/" + maxPs +
                 " - Tipo: " + principalType +
                 (secondaryType != null ? "/" + secondaryType : "");
+    }
+
+    public Movement getMovement(Movement movement){
+        for (Movement m : movements) {
+            if (m.getName().equals(movement.getName())) {
+                return m;
+            }
+        }
+        return null;
+
     }
 }
 

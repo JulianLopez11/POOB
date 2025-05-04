@@ -122,7 +122,7 @@ public class POOBkemonTest {
         firePokemon.addMovement(ember);
 
         int hpAntes = firePokemon.getCurrentPs();
-        waterPokemon.attack(firePokemon,0);
+        waterPokemon.attack(firePokemon,waterGun);
         int hpDespues = firePokemon.getCurrentPs();
         
 
@@ -130,7 +130,7 @@ public class POOBkemonTest {
         
         // Fuego no es muy efectivo contra agua
         hpAntes = waterPokemon.getCurrentPs();
-        firePokemon.attack( waterPokemon,0);
+        firePokemon.attack( waterPokemon,ember);
         hpDespues = waterPokemon.getCurrentPs();
         
         // El daño debería ser menor debido a la resistencia

@@ -16,7 +16,6 @@ public class POOBkemonGUI extends JFrame {
     private PokedexPanel pokedexPanel;
     private ModePvsPPanel modePvsPPanel;
     private Fights fightsPanel;
-    private TrainerSelectionPanel selectionPanel;
 
     public POOBkemonGUI() {
         pooBkemon = new POOBkemon();
@@ -55,8 +54,6 @@ public class POOBkemonGUI extends JFrame {
         ));
         contentPanel.add(pokedexPanel, "POKEDEX");
 
-        selectionPanel = new TrainerSelectionPanel(pooBkemon);
-        contentPanel.add(selectionPanel, "SELECCION");
     }
 
     public void prepareActions() {

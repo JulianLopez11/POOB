@@ -100,6 +100,14 @@ public class POOBkemon {
     }
 
     /**
+     * Establece el mapa de items disponibles
+     * @param items Mapa con los items disponibles
+     */
+    public void setDefaultItemsMap(HashMap<String, Item> items) {
+        this.defaultItemsMap = items;
+    }
+
+    /**
      * Termina el juego actual cuando un entrenador decide huir,
      * declarando como ganador al entrenador que no huyó.
      * @param fleeingTrainer El entrenador que decidió huir del combate
@@ -141,21 +149,5 @@ public class POOBkemon {
             return trainers.get(currentTrainerIndex);
         }
         return null;
-    }
-
-    public TreeMap<String,Pokemon> getPokedex() {
-        return pokedex;
-    }
-
-    public HashMap<String,Movement> getDefaultMovementsMap() {
-        return defaultMovementsMap;
-    }
-
-    public HashMap<String,Item> getDefaultItemsMap() {
-        return defaultItemsMap;
-    }
-
-    public void setTrainers(ArrayList<Trainer> trainers) {
-        this.trainers = trainers;
     }
 }
