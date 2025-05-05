@@ -1,4 +1,6 @@
 package src.domain;
+import src.presentation.POOBkemonGUI;
+
 import javax.swing.Timer.*;
 import javax.swing.*;
 import java.io.*;
@@ -13,6 +15,8 @@ import java.awt.event.*;
  */
 public class POOBkemon {
     private ArrayList<Trainer> trainers = new ArrayList<>();
+    Trainer trainer = new Trainer("Jugador 1");
+    Trainer trainer2 = new Trainer("Jugador 2");
     private TreeMap<String, Pokemon> pokedex = new TreeMap<>();
     private HashMap<String, Movement> defaultMovementsMap = new HashMap<>();
     private HashMap<String, Item> defaultItemsMap = new HashMap<>();
@@ -23,6 +27,8 @@ public class POOBkemon {
     private static final int TURN_TIME_LIMIT = 20;
 
     public POOBkemon() {
+        trainers.add(trainer);
+        trainers.add(trainer2);
         defaultPokemons();
         defaultItems();
         defaultMovements();
@@ -113,18 +119,6 @@ public class POOBkemon {
         defaultMovementsMap.put(cola_hierro.getName(), cola_hierro);
     }
 
-    public void addSelectedMovementToPokemon(Movement movement, Pokemon pokemon) {
-        pokemon.addMovement(movement);
-    }
-
-    /**
-     * Establece el mapa de items disponibles
-     * @param items Mapa con los items disponibles
-     */
-    public void setDefaultItemsMap(HashMap<String, Item> items) {
-        this.defaultItemsMap = items;
-    }
-
     /**
      * Termina el juego actual cuando un entrenador decide huir,
      * declarando como ganador al entrenador que no huyó.
@@ -179,5 +173,9 @@ public class POOBkemon {
 
     public HashMap<String, Item> getDefaultItemsMap() {
         return defaultItemsMap;
+    }
+
+    public ArrayList<Trainer> getTrainers() {
+        return trainers;
     }
 }

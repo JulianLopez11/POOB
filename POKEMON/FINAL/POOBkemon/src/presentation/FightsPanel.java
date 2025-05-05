@@ -1,9 +1,12 @@
 package src.presentation;
 
+import src.domain.Pokemon;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Panel para gestionar y mostrar la batalla de Pokémon.
@@ -145,15 +148,12 @@ public class FightsPanel extends JPanel {
         if (opponentPokemon != null) {
             g.drawImage(opponentPokemon.getImage(), opponentX, opponentY, opponentPokemonSize, opponentPokemonSize, this);
         }
-
         // Dibujar barras de salud y nombres
         drawHealthBarWithInfo(g, playerX, playerY - 20, playerPokemonSize, playerHealth, playerName, playerLevel, Color.GREEN);
         drawHealthBarWithInfo(g, opponentX, opponentY - 20, opponentPokemonSize, opponentHealth, opponentName, opponentLevel, Color.RED);
-
         int rawTextBoxHeight = (int) (panelHeight * TEXT_BOX_HEIGHT_RATIO);
-        int textBoxHeight = Math.max(rawTextBoxHeight, 60); // altura mínima de la barra
+        int textBoxHeight = Math.max(rawTextBoxHeight, 60);
         int textBoxY = panelHeight - textBoxHeight;
-
         // Fondo de la barra de texto
         g.setColor(new Color(0, 128, 128));
         g.fillRoundRect(0, textBoxY, panelWidth, textBoxHeight, 15, 15); // Bordes redondeados
@@ -170,7 +170,6 @@ public class FightsPanel extends JPanel {
         // Caja de opciones con borde redondeado
         g.setColor(new Color(50, 50, 50));
         g.fillRoundRect(optionsBoxX, optionsBoxY, optionsBoxWidth, optionsBoxHeight, 15, 15);
-
         repositionButtons();
     }
 
@@ -187,24 +186,20 @@ public class FightsPanel extends JPanel {
      * @param color  El color de la barra de salud.
      */
     private void drawHealthBarWithInfo(Graphics g, int x, int y, int width, int health, String name, int level, Color color) {
-        int barWidth = (int) (width * 0.8); // Ancho de la barra de salud
-        int barHeight = 10; // Altura de la barra de salud
+        int barWidth = (int) (width * 0.8);
+        int barHeight = 10;
         int filledWidth = (int) (barWidth * (health / 100.0));
 
-        // Dibujar nombre y nivel
         g.setColor(Color.BLACK);
         g.setFont(new Font("Arial", Font.BOLD, 14));
         g.drawString(name + " Lv" + level, x, y - 10);
 
-        // Fondo de la barra
         g.setColor(Color.GRAY);
         g.fillRect(x, y, barWidth, barHeight);
 
-        // Salud
         g.setColor(color);
         g.fillRect(x, y, filledWidth, barHeight);
 
-        // Borde de la barra
         g.setColor(Color.BLACK);
         g.drawRect(x, y, barWidth, barHeight);
     }
@@ -233,13 +228,10 @@ public class FightsPanel extends JPanel {
         bagButton.setBounds(optionsBoxX + buttonWidth + 2 * buttonMarginX, optionsBoxY + buttonMarginY, buttonWidth, buttonHeight);
         pokemonButton.setBounds(optionsBoxX + buttonMarginX, optionsBoxY + buttonHeight + 2 * buttonMarginY, buttonWidth, buttonHeight);
         runButton.setBounds(optionsBoxX + buttonWidth + 2 * buttonMarginX, optionsBoxY + buttonHeight + 2 * buttonMarginY, buttonWidth, buttonHeight);
-
-        // Posiciona el botón de pausa en la esquina superior izquierda
-        int pauseButtonWidth = 100; // Ancho del botón de pausa
-        int pauseButtonHeight = 40; // Altura del botón de pausa
-        int pauseButtonX = 10; // Margen desde el borde izquierdo
-        int pauseButtonY = 10; // Margen desde el borde superior
-
+        int pauseButtonWidth = 100;
+        int pauseButtonHeight = 40;
+        int pauseButtonX = 10;
+        int pauseButtonY = 10;
         pauseButton.setBounds(pauseButtonX, pauseButtonY, pauseButtonWidth, pauseButtonHeight);
     }
 
@@ -286,7 +278,7 @@ public class FightsPanel extends JPanel {
      */
     public void setPlayerTeam(List<String> playerTeam) {
         this.playerTeam = playerTeam;
-        currentPlayerPokemonIndex = 0; // El primer Pokémon será el inicial
+        currentPlayerPokemonIndex = 0;
         setPlayerPokemonImage("/resources/" + playerTeam.get(0).toLowerCase() + "Back.png");
         setPlayerInfo(playerTeam.get(0), 100); // Información inicial
     }
@@ -298,9 +290,9 @@ public class FightsPanel extends JPanel {
      */
     public void setOpponentTeam(List<String> opponentTeam) {
         this.opponentTeam = opponentTeam;
-        currentOpponentPokemonIndex = 0; // El primer Pokémon será el inicial
+        currentOpponentPokemonIndex = 0;
         setOpponentPokemonImage("/resources/" + opponentTeam.get(0).toLowerCase() + "Front.png");
-        setOpponentInfo(opponentTeam.get(0), 100); // Información inicial
+        setOpponentInfo(opponentTeam.get(0), 100);
     }
 
     /**
@@ -320,12 +312,12 @@ public class FightsPanel extends JPanel {
                 null,
                 playerTeam.toArray(),
                 playerTeam.get(currentPlayerPokemonIndex)
-        );
 
+        );
         if (selectedPokemon != null) {
             currentPlayerPokemonIndex = playerTeam.indexOf(selectedPokemon);
             setPlayerPokemonImage("/resources/" + selectedPokemon.toLowerCase() + "Back.png");
-            setPlayerInfo(selectedPokemon, 100); // Actualiza la información del Pokémon
+            setPlayerInfo(selectedPokemon, 100);
         }
     }
 
@@ -371,6 +363,7 @@ public class FightsPanel extends JPanel {
         return pauseButton;
     }
 
+
     /**
      * Establece la información del Pokémon del oponente.
      *
@@ -400,6 +393,30 @@ public class FightsPanel extends JPanel {
      */
     public void setOpponentPokemonImage(String imagePath) {
         this.opponentPokemon = new ImageIcon(getClass().getResource(imagePath));
+        repaint();
+    }
+
+    /**
+     * Actualiza la información de los Pokémon en el panel de batalla.
+     *
+     * @param playerPokemon El Pokémon del jugador.
+     * @param opponentPokemon El Pokémon del oponente.
+     */
+    public void updatePokemonInfo(Pokemon playerPokemon, Pokemon opponentPokemon) {
+        if (playerPokemon != null) {
+            this.playerName = playerPokemon.getName();
+            this.playerLevel = playerPokemon.getLevel();
+            this.playerHealth = (int)((playerPokemon.getCurrentPs() / (double)playerPokemon.getMaxPs()) * 100);
+            setPlayerPokemonImage("/resources/" + playerPokemon.getName().toLowerCase() + "Back.png");
+        }
+
+        if (opponentPokemon != null) {
+            this.opponentName = opponentPokemon.getName();
+            this.opponentLevel = opponentPokemon.getLevel();
+            this.opponentHealth = (int)((opponentPokemon.getCurrentPs() / (double)opponentPokemon.getMaxPs()) * 100);
+            setOpponentPokemonImage("/resources/" + opponentPokemon.getName().toLowerCase() + "Front.png");
+        }
+
         repaint();
     }
 }
