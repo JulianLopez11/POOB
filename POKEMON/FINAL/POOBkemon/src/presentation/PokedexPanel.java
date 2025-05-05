@@ -63,31 +63,48 @@ public class PokedexPanel extends JPanel {
         buttons.add(selectButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
+
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 50, 30));
         centerPanel.setOpaque(false);
 
-        pokemonImageLabel = new JLabel();
-        centerPanel.add(pokemonImageLabel);
+        pokemonImageLabel = new JLabel("", SwingConstants.CENTER);
+        pokemonImageLabel.setVerticalTextPosition(SwingConstants.BOTTOM);
+        pokemonImageLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+        pokemonImageLabel.setFont(new Font("Tahoma", Font.BOLD, 30));
+        pokemonImageLabel.setForeground(Color.BLACK);
 
+        centerPanel.add(pokemonImageLabel);
         add(centerPanel, BorderLayout.CENTER);
+
         setButtonsColor();
     }
+
     private void setButtonsColor() {
         for (JButton button : buttons) {
             button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
     }
+
     private void updatePokemonImage() {
         if (pokemonImages.isEmpty()) {
             pokemonImageLabel.setIcon(null);
+            pokemonImageLabel.setText("");
             return;
         }
 
-        String imagePath = pokemonImages.get(currentIndex);
+        String imagePath = "/resources/" + pokemonImages.get(currentIndex) + "Front.png";
         URL imageURL = getClass().getResource(imagePath);
+
         if (imageURL == null) {
             System.err.println("Imagen no encontrada: " + imagePath);
-            pokemonImageLabel.setIcon(null);
+            // Mostrar una imagen de "no disponible" si no se encuentra la imagen
+            URL defaultImageURL = getClass().getResource("/resources/NoImageAvailable.png");
+            if (defaultImageURL != null) {
+                pokemonImageLabel.setIcon(new ImageIcon(new ImageIcon(defaultImageURL).getImage().getScaledInstance(200, 200, Image.SCALE_SMOOTH)));
+            } else {
+                pokemonImageLabel.setIcon(null);
+            }
+            pokemonImageLabel.setText("Desconocido");
             return;
         }
 
@@ -99,6 +116,9 @@ public class PokedexPanel extends JPanel {
 
         Image scaledImage = pokemonImage.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
         pokemonImageLabel.setIcon(new ImageIcon(scaledImage));
+
+        String pokemonName = pokemonImages.get(currentIndex);
+        pokemonImageLabel.setText(pokemonName);
     }
 
     private void showPreviousPokemon() {
@@ -118,7 +138,6 @@ public class PokedexPanel extends JPanel {
     public JButton getBackButton() {
         return backButton;
     }
-
 
     @Override
     protected void paintComponent(Graphics g) {

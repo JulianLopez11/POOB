@@ -25,7 +25,7 @@ public class POOBkemonGUI extends JFrame {
     private List<String> availablePlayerPokemons;
     private List<String> availableOpponentPokemons;
     private Map<String, Pokemon> pokedex;
-    
+
 
     private Timer turnTimer;
     private int currentTurn = 1;
@@ -105,18 +105,18 @@ public class POOBkemonGUI extends JFrame {
         fightsPanel.getBagButton().addActionListener(e -> JOptionPane.showMessageDialog(this, "Acción de la mochila no implementada.", "Mochila", JOptionPane.INFORMATION_MESSAGE));
         fightsPanel.getFightButton().addActionListener(e -> JOptionPane.showMessageDialog(this, "Acción de pelear no implementada.", "Pelear", JOptionPane.INFORMATION_MESSAGE));
     }
-    
+
     /**
      * Muestra las opciones de movimientos disponibles según el turno actual
      */
     private void showMoveOptions() {
         Pokemon activePokemon = (currentTurn == 1) ? playerActivePokemon : opponentActivePokemon;
-        
+
         if (activePokemon == null) {
             JOptionPane.showMessageDialog(this, "No hay Pokémon activo para realizar movimientos.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         List<Movement> movements = activePokemon.getMovements();
         if (movements == null || movements.isEmpty()) {
             JOptionPane.showMessageDialog(this, "El Pokémon no tiene movimientos disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -149,17 +149,17 @@ public class POOBkemonGUI extends JFrame {
         setTrainer2Pokemons();
         startBattle();
     }
-    
+
     /**
      * Inicia la batalla entre los dos entrenadores
      */
     private void startBattle() {
         inBattle = true;
-        currentTurn = 1; // El jugador 1 comienza
+        currentTurn = 1;
 
         Trainer trainer1 = getTrainer1();
         Trainer trainer2 = getTrainer2();
-        
+
         if (!trainer1.getTeam().isEmpty() && !trainer2.getTeam().isEmpty()) {
             playerActivePokemon = trainer1.getTeam().get(0);
             opponentActivePokemon = trainer2.getTeam().get(0);
@@ -167,15 +167,15 @@ public class POOBkemonGUI extends JFrame {
             fightsPanel.getFightButton().addActionListener(e -> showMoveOptions());
             updateBattleUI();
             startTurnTimer();
-            
-            JOptionPane.showMessageDialog(this, 
-                                         "¡La batalla ha comenzado! Tienes 20 segundos para realizar tu movimiento.", 
-                                         "Inicio de Batalla", 
+
+            JOptionPane.showMessageDialog(this,
+                                         "¡La batalla ha comenzado! Tienes 20 segundos para realizar tu movimiento.",
+                                         "Inicio de Batalla",
                                          JOptionPane.INFORMATION_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, 
-                                         "No hay Pokémon disponibles para la batalla.", 
-                                         "Error", 
+            JOptionPane.showMessageDialog(this,
+                                         "No hay Pokémon disponibles para la batalla.",
+                                         "Error",
                                          JOptionPane.ERROR_MESSAGE);
             cardLayout.show(contentPanel, "INICIO");
         }
@@ -263,7 +263,7 @@ public class POOBkemonGUI extends JFrame {
             }
         }
     }
-    
+
     /**
      * Ejecuta el movimiento seleccionado y aplica el daño al Pokémon rival
      * @param movementName Nombre del movimiento a ejecutar
@@ -283,19 +283,19 @@ public class POOBkemonGUI extends JFrame {
             if (turnTimer != null) {
                 turnTimer.stop();
             }
-            
+
 
             int damage = attacker.attack(target, selectedMovement);
 
-            String message = attacker.getName() + " usó " + selectedMovement.getName() + 
+            String message = attacker.getName() + " usó " + selectedMovement.getName() +
                              " y causó " + damage + " puntos de daño a " + target.getName() + "!";
             JOptionPane.showMessageDialog(this, message, "Ataque", JOptionPane.INFORMATION_MESSAGE);
 
             updateBattleUI();
             if (target.isFainted()) {
-                JOptionPane.showMessageDialog(this, 
-                                             target.getName() + " se ha debilitado!", 
-                                             "Pokémon Debilitado", 
+                JOptionPane.showMessageDialog(this,
+                                             target.getName() + " se ha debilitado!",
+                                             "Pokémon Debilitado",
                                              JOptionPane.INFORMATION_MESSAGE);
                 if (currentTurn == 2) {
                     handlePlayerDefeat();
@@ -306,31 +306,31 @@ public class POOBkemonGUI extends JFrame {
                 switchTurn();
             }
         } else {
-            JOptionPane.showMessageDialog(this, 
-                                         "No se encontró el movimiento seleccionado.", 
-                                         "Error", 
+            JOptionPane.showMessageDialog(this,
+                                         "No se encontró el movimiento seleccionado.",
+                                         "Error",
                                          JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     /**
      * Maneja la derrota del Pokémon del jugador
      */
     private void handlePlayerDefeat() {
         Trainer trainer1 = getTrainer1();
         boolean hasMorePokemon = false;
-        
+
         for (Pokemon pokemon : trainer1.getTeam()) {
             if (!pokemon.isFainted() && pokemon != playerActivePokemon) {
                 hasMorePokemon = true;
                 break;
             }
         }
-        
+
         if (hasMorePokemon) {
-            int option = JOptionPane.showConfirmDialog(this, 
-                                                      "Tu Pokémon ha sido derrotado. ¿Deseas cambiar a otro Pokémon?", 
-                                                      "Cambio de Pokémon", 
+            int option = JOptionPane.showConfirmDialog(this,
+                                                      "Tu Pokémon ha sido derrotado. ¿Deseas cambiar a otro Pokémon?",
+                                                      "Cambio de Pokémon",
                                                       JOptionPane.YES_NO_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 fightsPanel.changePlayerPokemon();
@@ -343,21 +343,21 @@ public class POOBkemonGUI extends JFrame {
             endBattle("Jugador 2");
         }
     }
-    
+
     /**
      * Maneja la derrota del Pokémon del oponente
      */
     private void handleOpponentDefeat() {
         Trainer trainer2 = getTrainer2();
         boolean hasMorePokemon = false;
-        
+
         for (Pokemon pokemon : trainer2.getTeam()) {
             if (!pokemon.isFainted() && pokemon != opponentActivePokemon) {
                 hasMorePokemon = true;
                 break;
             }
         }
-        
+
         if (hasMorePokemon) {
             fightsPanel.changeOpponentPokemon();
             updateBattleUI();
@@ -377,7 +377,7 @@ public class POOBkemonGUI extends JFrame {
         inBattle = false;
         cardLayout.show(contentPanel, "INICIO");
     }
-    
+
     /**
      * Inicia el temporizador para el turno actual
      */
@@ -385,19 +385,19 @@ public class POOBkemonGUI extends JFrame {
         if (turnTimer != null) {
             turnTimer.stop();
         }
-        
+
         turnTimer = new Timer(TURN_DURATION, e -> {
-            JOptionPane.showMessageDialog(this, 
-                                         "¡Se acabó el tiempo! Turno perdido.", 
-                                         "Tiempo Agotado", 
+            JOptionPane.showMessageDialog(this,
+                                         "¡Se acabó el tiempo! Turno perdido.",
+                                         "Tiempo Agotado",
                                          JOptionPane.INFORMATION_MESSAGE);
             switchTurn();
         });
-        
+
         turnTimer.setRepeats(false);
         turnTimer.start();
     }
-    
+
     /**
      * Cambia al siguiente turno
      */
@@ -407,13 +407,13 @@ public class POOBkemonGUI extends JFrame {
         if (currentTurn == 2) {
             simulateOpponentTurn();
         } else {
-            JOptionPane.showMessageDialog(this, 
-                                         "Es tu turno. Tienes 20 segundos para realizar un movimiento.", 
-                                         "Turno del Jugador", 
+            JOptionPane.showMessageDialog(this,
+                                         "Es tu turno. Tienes 20 segundos para realizar un movimiento.",
+                                         "Turno del Jugador",
                                          JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    
+
     /**
      * Simula el turno del oponente controlado por la CPU
      */
@@ -424,9 +424,9 @@ public class POOBkemonGUI extends JFrame {
                 Movement randomMove = opponentActivePokemon.getMovements().get(randomIndex);
                 executeMove(randomMove.getName());
             } else {
-                JOptionPane.showMessageDialog(this, 
-                                             "El oponente no tiene movimientos disponibles.", 
-                                             "Error", 
+                JOptionPane.showMessageDialog(this,
+                                             "El oponente no tiene movimientos disponibles.",
+                                             "Error",
                                              JOptionPane.ERROR_MESSAGE);
                 switchTurn();
             }
@@ -434,7 +434,7 @@ public class POOBkemonGUI extends JFrame {
         delayTimer.setRepeats(false);
         delayTimer.start();
     }
-    
+
     /**
      * Finaliza la batalla declarando un ganador
      * @param winner Nombre del ganador
@@ -444,10 +444,10 @@ public class POOBkemonGUI extends JFrame {
         if (turnTimer != null) {
             turnTimer.stop();
         }
-        
-        JOptionPane.showMessageDialog(this, 
-                                     "¡La batalla ha terminado! El ganador es: " + winner, 
-                                     "Fin de la Batalla", 
+
+        JOptionPane.showMessageDialog(this,
+                                     "¡La batalla ha terminado! El ganador es: " + winner,
+                                     "Fin de la Batalla",
                                      JOptionPane.INFORMATION_MESSAGE);
         cardLayout.show(contentPanel, "INICIO");
     }
@@ -513,7 +513,7 @@ public class POOBkemonGUI extends JFrame {
         List<Pokemon> team2 = trainer2.getTeam();
         return team2;
     }
-    
+
     /**
      * Actualiza la información de los Pokémon en la interfaz de batalla
      */
@@ -521,7 +521,7 @@ public class POOBkemonGUI extends JFrame {
         if (playerActivePokemon == null || opponentActivePokemon == null) {
             Trainer trainer1 = getTrainer1();
             Trainer trainer2 = getTrainer2();
-            
+
             if (!trainer1.getTeam().isEmpty() && !trainer2.getTeam().isEmpty()) {
                 for (Pokemon p : trainer1.getTeam()) {
                     if (!p.isFainted()) {
@@ -529,7 +529,7 @@ public class POOBkemonGUI extends JFrame {
                         break;
                     }
                 }
-                
+
                 for (Pokemon p : trainer2.getTeam()) {
                     if (!p.isFainted()) {
                         opponentActivePokemon = p;
@@ -538,7 +538,7 @@ public class POOBkemonGUI extends JFrame {
                 }
             }
         }
-        
+
         if (playerActivePokemon != null && opponentActivePokemon != null) {
             fightsPanel.updatePokemonInfo(playerActivePokemon, opponentActivePokemon);
         }

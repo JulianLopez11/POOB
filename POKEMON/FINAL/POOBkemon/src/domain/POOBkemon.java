@@ -50,6 +50,14 @@ public class POOBkemon {
         Pokemon metagross = new Pokemon("Metagross", PokemonType.PSIQUICO);
         Pokemon togetic = new Pokemon("Togetic", PokemonType.HADA, PokemonType.VOLADOR);
         Pokemon tyranitar = new Pokemon("Tyranitar", PokemonType.ROCA);
+        Pokemon blaziken = new Pokemon("Blaziken", PokemonType.LUCHA);
+        Pokemon golduck = new Pokemon("Golduck",PokemonType.AGUA);
+        Pokemon gyarados = new Pokemon("Gyarados",PokemonType.AGUA);
+        Pokemon hooh = new Pokemon("Ho-Oh",PokemonType.FUEGO,PokemonType.DRAGON);
+        Pokemon mrmime = new Pokemon("Mr-Mime",PokemonType.HADA);
+        Pokemon slaking = new Pokemon("Slaking",PokemonType.LUCHA);
+
+
 
         pokedex.put(charizard.getName(), charizard);
         pokedex.put(blastoise.getName(), blastoise);
@@ -65,6 +73,13 @@ public class POOBkemon {
         pokedex.put(metagross.getName(), metagross);
         pokedex.put(togetic.getName(), togetic);
         pokedex.put(tyranitar.getName(), tyranitar);
+        pokedex.put(blaziken.getName(), blaziken);
+        pokedex.put(golduck.getName(), golduck);
+        pokedex.put(gyarados.getName(),gyarados);
+        pokedex.put(hooh.getName(), hooh);
+        pokedex.put(mrmime.getName(),mrmime);
+        pokedex.put(slaking.getName(),slaking);
+
 
 
 
