@@ -52,7 +52,7 @@ public class PokemonSelectionPanel extends JPanel {
         pokemonInfoArea.setEditable(false);
         pokemonInfoArea.setBorder(BorderFactory.createTitledBorder("Información del Pokémon"));
 
-        // Componentes para asignar movimientos
+
         movementComboBox = new JComboBox<>();
         assignedMovementsListModel = new DefaultListModel<>();
         assignedMovementsList = new JList<>(assignedMovementsListModel);
@@ -62,7 +62,7 @@ public class PokemonSelectionPanel extends JPanel {
         movementsPanel.add(new JScrollPane(assignedMovementsList));
         movementsPanel.add(movementComboBox);
 
-        // Botones para añadir/quitar movimientos
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton addMovementButton = new JButton("Añadir Movimiento");
         JButton removeMovementButton = new JButton("Quitar Movimiento");
@@ -74,13 +74,10 @@ public class PokemonSelectionPanel extends JPanel {
         buttonPanel.add(confirmPokemonButton);
         buttonPanel.add(confirmPokemonsButton);
         buttonPanel.add(startBattleButton);
-
-        // Añadir componentes al panel principal
         add(pokemonPanel, BorderLayout.NORTH);
         add(pokemonInfoArea, BorderLayout.WEST);
         add(movementsPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
-
         // Listeners
         pokemonComboBox.addActionListener(e -> onPokemonSelected());
         addMovementButton.addActionListener(e -> addMovement());

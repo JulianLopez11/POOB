@@ -28,7 +28,7 @@ public class PlayScreenPanel extends JPanel {
 
         JPanel modePanel = new JPanel(new GridLayout(4, 1, 0, 15));
         modePanel.setOpaque(false);
-        modePanel.setPreferredSize(new Dimension(250, 200)); // Tamaño fijo para centrado visual
+        modePanel.setPreferredSize(new Dimension(250, 200));
 
         PVsPButton = new JButton("Jugador Vs Jugador");
         PVsPButton.setContentAreaFilled(false);
@@ -70,11 +70,11 @@ public class PlayScreenPanel extends JPanel {
     private void setButtonsColor() {
         for (JButton button : buttons) {
             button.setOpaque(false);
-            button.setContentAreaFilled(true); // Permite pintar el fondo
-            button.setBackground(new Color(255, 255, 255, 150)); // Fondo blanco semitransparente
-            button.setForeground(Color.BLACK); // Texto negro
-            button.setFont(new Font("Arial", Font.BOLD, 18)); // Fuente personalizada
-            button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Estilo de cursor
+            button.setContentAreaFilled(true);
+            button.setBackground(new Color(255, 255, 255, 150));
+            button.setForeground(Color.BLACK);
+            button.setFont(new Font("Arial", Font.BOLD, 18));
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
             button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         }
     }

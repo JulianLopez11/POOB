@@ -37,7 +37,6 @@ public class HomeScreenPanel extends JPanel {
             button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
     }
-
     public JButton getPlayButton() {
         return playButton;
     }

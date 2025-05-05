@@ -26,9 +26,9 @@ public class POOBkemonGUI extends JFrame {
     private List<String> availableOpponentPokemons;
     private Map<String, Pokemon> pokedex;
     
-    // Variables para control de la batalla
+
     private Timer turnTimer;
-    private int currentTurn = 1; // 1 para Trainer1, 2 para Trainer2
+    private int currentTurn = 1;
     private boolean inBattle = false;
     private static final int TURN_DURATION = 20 * 1000; // 20 segundos en milisegundos
     private Pokemon playerActivePokemon;
@@ -122,14 +122,12 @@ public class POOBkemonGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "El Pokémon no tiene movimientos disponibles.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        // Crear un array con los nombres de los movimientos
+
         String[] moveOptions = new String[movements.size()];
         for (int i = 0; i < movements.size(); i++) {
             moveOptions[i] = movements.get(i).getName();
         }
-        
-        // Mostrar diálogo para seleccionar movimiento
+
         String selectedMove = (String) JOptionPane.showInputDialog(
             this,
             "Selecciona un movimiento:",
@@ -139,8 +137,7 @@ public class POOBkemonGUI extends JFrame {
             moveOptions,
             moveOptions[0]
         );
-        
-        // Si se seleccionó un movimiento, ejecutarlo
+
         if (selectedMove != null) {
             executeMove(selectedMove);
         }
@@ -159,23 +156,16 @@ public class POOBkemonGUI extends JFrame {
     private void startBattle() {
         inBattle = true;
         currentTurn = 1; // El jugador 1 comienza
-        
-        // Obtener los Pokémon activos
+
         Trainer trainer1 = getTrainer1();
         Trainer trainer2 = getTrainer2();
         
         if (!trainer1.getTeam().isEmpty() && !trainer2.getTeam().isEmpty()) {
             playerActivePokemon = trainer1.getTeam().get(0);
             opponentActivePokemon = trainer2.getTeam().get(0);
-            
-            // Configurar el botón de pelea para que muestre los movimientos disponibles
             fightsPanel.getFightButton().removeActionListener(fightsPanel.getFightButton().getActionListeners()[0]);
             fightsPanel.getFightButton().addActionListener(e -> showMoveOptions());
-            
-            // Actualizar la interfaz para mostrar la información de los Pokémon
             updateBattleUI();
-            
-            // Iniciar el temporizador para el turno
             startTurnTimer();
             
             JOptionPane.showMessageDialog(this, 
@@ -236,19 +226,19 @@ public class POOBkemonGUI extends JFrame {
                 options[0]
         );
 
-       if (choice == JOptionPane.YES_OPTION) {
-           Pokemon newPokemon = fightsPanel.changePlayerPokemon();
-           if (newPokemon != null) {
-              playerActivePokemon = newPokemon;
-               updateBattleUI();
-           }
-        } else if (choice == JOptionPane.NO_OPTION) {
-          Pokemon newPokemon = fightsPanel.changeOpponentPokemon();
-           if (newPokemon != null) {
-               opponentActivePokemon = newPokemon;
-               updateBattleUI();
-            }
-        }
+//       if (choice == JOptionPane.YES_OPTION) {
+//           Pokemon newPokemon = fightsPanel.changePlayerPokemon();
+//           if (newPokemon != null) {
+//              playerActivePokemon = newPokemon;
+//               updateBattleUI();
+//           }
+//        } else if (choice == JOptionPane.NO_OPTION) {
+//          Pokemon newPokemon = fightsPanel.changeOpponentPokemon();
+//           if (newPokemon != null) {
+//               opponentActivePokemon = newPokemon;
+//               updateBattleUI();
+//            }
+//        }
   }
 
     public void pause() {
@@ -279,11 +269,9 @@ public class POOBkemonGUI extends JFrame {
      * @param movementName Nombre del movimiento a ejecutar
      */
     private void executeMove(String movementName) {
-        // Obtener el Pokémon activo y el objetivo según el turno
         Pokemon attacker = (currentTurn == 1) ? playerActivePokemon : opponentActivePokemon;
         Pokemon target = (currentTurn == 1) ? opponentActivePokemon : playerActivePokemon;
-        
-        // Encontrar el movimiento seleccionado
+
         Movement selectedMovement = null;
         for (Movement m : attacker.getMovements()) {
             if (m.getName().equals(movementName)) {
@@ -291,39 +279,30 @@ public class POOBkemonGUI extends JFrame {
                 break;
             }
         }
-        
         if (selectedMovement != null) {
-            // Detener el temporizador mientras se ejecuta el movimiento
             if (turnTimer != null) {
                 turnTimer.stop();
             }
             
-            // Calcular y aplicar el daño
+
             int damage = attacker.attack(target, selectedMovement);
-            
-            // Mostrar información del ataque
+
             String message = attacker.getName() + " usó " + selectedMovement.getName() + 
                              " y causó " + damage + " puntos de daño a " + target.getName() + "!";
             JOptionPane.showMessageDialog(this, message, "Ataque", JOptionPane.INFORMATION_MESSAGE);
-            
-            // Actualizar la interfaz con el nuevo estado de salud
+
             updateBattleUI();
-            
-            // Verificar si el Pokémon objetivo ha sido debilitado
             if (target.isFainted()) {
                 JOptionPane.showMessageDialog(this, 
                                              target.getName() + " se ha debilitado!", 
                                              "Pokémon Debilitado", 
                                              JOptionPane.INFORMATION_MESSAGE);
-                
-                // Si el Pokémon es del jugador 1 y se ha debilitado
                 if (currentTurn == 2) {
                     handlePlayerDefeat();
                 } else {
                     handleOpponentDefeat();
                 }
             } else {
-                // Pasar al siguiente turno
                 switchTurn();
             }
         } else {
@@ -349,7 +328,6 @@ public class POOBkemonGUI extends JFrame {
         }
         
         if (hasMorePokemon) {
-            // Preguntar si quiere cambiar de Pokémon
             int option = JOptionPane.showConfirmDialog(this, 
                                                       "Tu Pokémon ha sido derrotado. ¿Deseas cambiar a otro Pokémon?", 
                                                       "Cambio de Pokémon", 
@@ -362,7 +340,6 @@ public class POOBkemonGUI extends JFrame {
                 endBattle("Jugador 2");
             }
         } else {
-            // El jugador ha perdido todos sus Pokémon
             endBattle("Jugador 2");
         }
     }
@@ -371,7 +348,6 @@ public class POOBkemonGUI extends JFrame {
      * Maneja la derrota del Pokémon del oponente
      */
     private void handleOpponentDefeat() {
-        // Obtener otro Pokémon del oponente si tiene más
         Trainer trainer2 = getTrainer2();
         boolean hasMorePokemon = false;
         
@@ -387,7 +363,6 @@ public class POOBkemonGUI extends JFrame {
             updateBattleUI();
             switchTurn();
         } else {
-            // El oponente ha perdido todos sus Pokémon
             endBattle("Jugador 1");
         }
     }
@@ -412,7 +387,6 @@ public class POOBkemonGUI extends JFrame {
         }
         
         turnTimer = new Timer(TURN_DURATION, e -> {
-            // Cuando se acabe el tiempo del turno
             JOptionPane.showMessageDialog(this, 
                                          "¡Se acabó el tiempo! Turno perdido.", 
                                          "Tiempo Agotado", 
@@ -428,13 +402,8 @@ public class POOBkemonGUI extends JFrame {
      * Cambia al siguiente turno
      */
     private void switchTurn() {
-        // Cambiar de turno
         currentTurn = (currentTurn == 1) ? 2 : 1;
-        
-        // Iniciar el temporizador para el nuevo turno
         startTurnTimer();
-        
-        // Si es el turno del oponente, hacer que el CPU elija un movimiento automáticamente
         if (currentTurn == 2) {
             simulateOpponentTurn();
         } else {
@@ -449,9 +418,7 @@ public class POOBkemonGUI extends JFrame {
      * Simula el turno del oponente controlado por la CPU
      */
     private void simulateOpponentTurn() {
-        // Dejar un pequeño retraso para que se vea más natural
         Timer delayTimer = new Timer(1000, e -> {
-            // Seleccionar un movimiento aleatorio
             if (opponentActivePokemon != null && !opponentActivePokemon.getMovements().isEmpty()) {
                 int randomIndex = (int)(Math.random() * opponentActivePokemon.getMovements().size());
                 Movement randomMove = opponentActivePokemon.getMovements().get(randomIndex);
@@ -482,8 +449,6 @@ public class POOBkemonGUI extends JFrame {
                                      "¡La batalla ha terminado! El ganador es: " + winner, 
                                      "Fin de la Batalla", 
                                      JOptionPane.INFORMATION_MESSAGE);
-        
-        // Volver a la pantalla de inicio
         cardLayout.show(contentPanel, "INICIO");
     }
 
@@ -554,7 +519,6 @@ public class POOBkemonGUI extends JFrame {
      */
     private void updateBattleUI() {
         if (playerActivePokemon == null || opponentActivePokemon == null) {
-            // Si no hay Pokémon activos, intentar obtenerlos
             Trainer trainer1 = getTrainer1();
             Trainer trainer2 = getTrainer2();
             
@@ -576,7 +540,6 @@ public class POOBkemonGUI extends JFrame {
         }
         
         if (playerActivePokemon != null && opponentActivePokemon != null) {
-            // Actualizar la información en el panel de batalla
             fightsPanel.updatePokemonInfo(playerActivePokemon, opponentActivePokemon);
         }
     }

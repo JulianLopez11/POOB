@@ -63,8 +63,6 @@ public class PokedexPanel extends JPanel {
         buttons.add(selectButton);
 
         add(bottomPanel, BorderLayout.SOUTH);
-
-        // Panel central para imagen
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 50, 30));
         centerPanel.setOpaque(false);
 

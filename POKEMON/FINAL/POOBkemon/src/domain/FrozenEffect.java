@@ -4,18 +4,17 @@ public class FrozenEffect implements StatusEffect {
     @Override
     public boolean applyEffect(Pokemon pokemon) {
         Random random = new Random();
-        // 20% de probabilidad de descongelarse
+
         if (random.nextInt(100) < 20) {
             System.out.println(pokemon.getName() + " se ha descongelado!");
-            return true; // Se descongeló y puede actuar
+            return true;
         } else {
-            return false; // Sigue congelado y no puede actuar
+            return false;
         }
     }
 
     @Override
     public boolean isImmune(Pokemon pokemon) {
-        // Los Pokémon tipo hielo son inmunes a la congelación
         PokemonType principalType = pokemon.getPrincipalType();
         PokemonType secondaryType = pokemon.getSecondaryType();
 

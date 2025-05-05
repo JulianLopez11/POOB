@@ -89,7 +89,7 @@ public class Pokemon implements Serializable {
                 (secondaryType != null && movementType.equals(this.secondaryType))) {
             stab = 1.5;
         }
-        // El modificador incluye: efectividad por tipo, crítico, STAB y factor aleatorio
+        // modificador: efectividad por tipo, crítico, STAB y factor aleatorio
         double modificador = typeEffectiveness * criticalHit * randomFactor * stab;
         int finalDamage = (int) Math.round(baseDamage * modificador);
         int damageDealt = typeEffectiveness == 0.0 ? 0 : Math.max(1, finalDamage);

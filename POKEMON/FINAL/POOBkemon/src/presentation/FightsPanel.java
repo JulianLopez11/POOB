@@ -21,20 +21,17 @@ public class FightsPanel extends JPanel {
     private JButton runButton;
     private JButton pauseButton;
     private ArrayList<JButton> buttons = new ArrayList<>();// Botón de pausa
-    // Estado de pausa
 
-    // Equipos de jugadores y oponentes
     private List<String> playerTeam;
     private List<String> opponentTeam;
-    // Índices de Pokémon actuales
+
     private int currentPlayerPokemonIndex = 0;
 
     private int currentOpponentPokemonIndex = 0;
-    // Bandera para permitir el cambio de Pokémon
+
     private boolean canChangePlayerPokemon = true;
     private boolean canChangeOpponentPokemon = true;
 
-    // Salud e información de los Pokémon
     private int playerHealth = 100;
     private int opponentHealth = 100;
     private String playerName = "";
@@ -42,7 +39,6 @@ public class FightsPanel extends JPanel {
     private int playerLevel = 100;
     private int opponentLevel = 100;
 
-    // Constantes de posicionamiento
     private final double PLAYER_X_RATIO = 0.167;
     private final double PLAYER_Y_RATIO = 0.6;
     private final double PLAYER_SIZE_RATIO = 0.2;
@@ -343,7 +339,7 @@ public class FightsPanel extends JPanel {
         if (selectedPokemon != null) {
             currentOpponentPokemonIndex = opponentTeam.indexOf(selectedPokemon);
             setOpponentPokemonImage("/resources/" + selectedPokemon.toLowerCase() + "Front.png");
-            setOpponentInfo(selectedPokemon, 100); // Actualiza la información del Pokémon
+            setOpponentInfo(selectedPokemon, 100);
         }
     }
 

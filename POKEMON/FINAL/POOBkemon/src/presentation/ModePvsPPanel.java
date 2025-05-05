@@ -24,7 +24,7 @@ public class ModePvsPPanel extends JPanel {
 
         JPanel modePanel = new JPanel(new GridLayout(4, 1, 0, 15));
         modePanel.setOpaque(false);
-        modePanel.setPreferredSize(new Dimension(250, 200)); // Tamaño fijo para centrado visual
+        modePanel.setPreferredSize(new Dimension(250, 200));
 
         normalButton = new JButton("Normal");
         normalButton.setContentAreaFilled(false);
@@ -50,17 +50,16 @@ public class ModePvsPPanel extends JPanel {
     }
 
     private void setButtonsColor() {
-        for (JButton button : buttons) {// Borde verde oscuro
+        for (JButton button : buttons) {
             button.setOpaque(false);
-            button.setContentAreaFilled(true); // Permite pintar el fondo
-            button.setBackground(new Color(255, 255, 255, 150)); // Fondo blanco semitransparente
+            button.setContentAreaFilled(true);
+            button.setBackground(new Color(255, 255, 255, 150));
             button.setForeground(Color.BLACK); // Texto negro
-            button.setFont(new Font("Arial", Font.BOLD, 18)); // Fuente personalizada
-            button.setCursor(new Cursor(Cursor.HAND_CURSOR)); // Estilo de cursor
-            button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Cambia el cursor al pasar sobre el botón
+            button.setFont(new Font("Arial", Font.BOLD, 18));
+            button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            button.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         }
     }
-
     public JButton getBackButton(){
         return backButton;
     }

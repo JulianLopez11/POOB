@@ -107,7 +107,7 @@ public class Trainer {
      * @return Lista con los Pokémon del equipo
      */
     public List<Pokemon> getTeam() {
-        return new ArrayList<>(team); // Devuelve una copia para evitar modificaciones no deseadas
+        return new ArrayList<>(team);
     }
 
     /**
