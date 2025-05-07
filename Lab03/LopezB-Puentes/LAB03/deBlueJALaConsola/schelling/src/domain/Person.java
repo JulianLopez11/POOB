@@ -1,12 +1,13 @@
 package domain;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 /**Information about a person<br>
 <b>(city,row,column,color)</b><br>
 <br>
  */
-public class Person extends Agent implements Item{
+public class Person extends Agent implements Item, Serializable {
     protected City city;
     protected int row,column;    
     protected Color color;
