@@ -1,12 +1,10 @@
 package Test;
 
-import domain.Walker;
-import domain.City;
-import domain.Person;
-import domain.Light;
-import domain.Katalan;
-import domain.Identifier;
+import domain.*;
+
 import java.awt.Color;
+import java.io.File;
+import java.io.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.AfterEach;
@@ -22,14 +20,7 @@ import org.junit.jupiter.api.Test;
 public class CityTest
 {
     City city;
-    /**
-     * Default constructor for test class CityTest
-     */
-    public CityTest()
-    {
-        city = new City();
-    }
-
+    File testFile;
     /**
      * Sets up the test fixture.
      *
@@ -38,6 +29,13 @@ public class CityTest
     @BeforeEach
     public void setUp()
     {
+        city = new City();
+        testFile = new File("testCity.dat");
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(testFile))) {
+            out.writeObject(city);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     @Test
@@ -183,7 +181,76 @@ public class CityTest
         
         assertEquals(expectedColor,actualColor);
     }
-    
+
+    @Test
+    public void shouldExport00CityToFile(){
+        File file = new File("test.txt");
+        city.export00(file);
+        assertTrue(file.exists());
+    }
+
+    @Test
+    public void shouldImport00CityFromFile(){
+        File file = new File("test.txt");
+        city.import00(file);
+        assertTrue(file.exists());
+        file.delete();
+    }
+
+    @Test
+    public void shouldOpen00CityFromFile(){
+        City loadedCity = city.open00(testFile);
+        assertEquals(city.getSize(),loadedCity.getSize());
+        testFile.delete();
+    }
+
+    @Test
+    public void shouldSave00CityToFile(){
+        File file = new File("test1.txt");
+        city.save00(file);
+        assertTrue(file.exists());
+        file.delete();
+    }
+
+    @Test
+    public void shouldNotOpen01CityFromFile(){
+        File file = new File("");
+        try{
+            city.open01(file);
+        }catch (CityException e){
+            assertEquals( "No se encontró el archivo: " + file.getAbsolutePath(),e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldNotSave01CityToFile(){
+        File file = new File("");
+        try{
+            city.save01(file);
+        }catch (CityException e){
+            assertEquals( "El archivo especificado no existe",e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldNotImport01CityFromFile() {
+        File file = new File("");
+        try {
+            city.import00(file);
+        } catch (CityException e) {
+            assertEquals("Error al importar el archivo " + file.getName(),e.getMessage());
+        }
+    }
+
+    @Test
+    public void shouldNotExport01CityToFile() {
+        File file = new File("");
+        try {
+            city.export00(file);
+        } catch (CityException e) {
+            assertEquals("No se pudo exportar el archivo: " + file.getName(), e.getMessage());
+        }
+    }
     /**
      * Tears down the test fixture.
      *
@@ -192,5 +259,6 @@ public class CityTest
     @AfterEach
     public void tearDown()
     {
+        testFile.delete();
     }
 }

@@ -343,4 +343,56 @@ public class City implements Serializable {
             throw new CityException("No se pudo exportar el archivo: " + file.getName());
         }
     }
+    //-------------------------------02-----------------------
+    public void import02(File file) throws CityException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.trim().split(" ");
+                if (parts.length != 3) continue;
+                String type = parts[0];
+                int row = Integer.parseInt(parts[1]);
+                int col = Integer.parseInt(parts[2]);
+                Item item = null;
+                if ("Person".equals(type)) {
+                    item = new Person(this, row, col);
+                } else if ("Walker".equals(type)) {
+                    item = new Walker(this, row, col);
+                } else if ("Light".equals(type)) {
+                    item = new Light(this, row, col);
+                } else if ("Katalan".equals(type)) {
+                    item = new Katalan(this, row, col);
+                } else if ("Identifier".equals(type)) {
+                    item = new Identifier(this, row, col);
+                } else if ("Schelling".equals(type)) {
+                    item = new Schelling(this, row, col);
+                } else {
+                    throw new CityException("Tipo desconocido: " + type);
+                }
+                if (item != null) {
+                    locations[row][col] = item;
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            throw new CityException("Error al importar el archivo " + file.getName());
+        }
+    }
+    //Exportar Archivo 02
+    public void export02(File file) throws CityException {
+        try (FileWriter writer = new FileWriter(file)) {
+            for (int r = 0; r < SIZE; r++) {
+                for (int c = 0; c < SIZE; c++) {
+                    Item item = locations[r][c];
+                    if (item != null) {
+                        String type = item.getClass().getSimpleName();
+                        writer.write(type + " " + r + " " + c + "\n");
+                    }else{
+                        throw new CityException("Error al exportar el archivo " + file.getName());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new CityException("No se pudo exportar el archivo: " + file.getName());
+        }
+    }
 }
