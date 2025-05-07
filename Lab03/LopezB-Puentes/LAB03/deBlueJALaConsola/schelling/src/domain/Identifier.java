@@ -1,5 +1,6 @@
 package domain;
 import java.awt.Color;
+import java.io.Serializable;
 
 
 /**
@@ -8,7 +9,7 @@ import java.awt.Color;
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Identifier implements Item{
+public class Identifier implements Item, Serializable {
     private int row,column;
     private City city;
     public final static char RED ='r', GREEN ='g', GRAY = 'y';

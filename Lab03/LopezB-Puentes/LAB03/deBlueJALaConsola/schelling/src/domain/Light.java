@@ -1,13 +1,13 @@
 package domain;
 import java.awt.Color;
-
+import java.io.Serializable;
 /**
  * Write a description of class Light here.
  * 
  * @author (your name) 
  * @version (a version number or a date)
  */
-public class Light implements Item
+public class Light implements Item, Serializable
 {
     private City city;
     private int row,column;
