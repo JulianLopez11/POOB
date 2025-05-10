@@ -129,7 +129,7 @@ public class Pokemon implements Serializable {
     }
 
     public void addEffect(AttributeEffect effect) {
-       attributeEffects.add(effect);
+        attributeEffects.add(effect);
     }
 
     public void useMovement(Movement movimiento, Pokemon target) {
@@ -140,7 +140,30 @@ public class Pokemon implements Serializable {
         statusEffect = null;
     }
 
-    public void increaseStat(String stat, int amount ){
+    /**
+     * Incrementa una estadística específica del Pokémon
+     * 
+     * @param stat Nombre de la estadística a incrementar (attack, defense, specialAttack, specialDefense, velocity, maxPs)
+     * @param amount Cantidad a incrementar
+     */
+    public void increaseStat(String stat, int amount) {
+        String lowerStat = stat.toLowerCase();
+        if ("attack".equals(lowerStat)) {
+            this.attack += amount;
+        } else if ("defense".equals(lowerStat)) {
+            this.defense += amount;
+        } else if ("specialattack".equals(lowerStat)) {
+            this.specialAttack += amount;
+        } else if ("specialdefense".equals(lowerStat)) {
+            this.specialDefense += amount;
+        } else if ("velocity".equals(lowerStat)) {
+            this.velocity += amount;
+        } else if ("maxps".equals(lowerStat)) {
+            this.maxPs += amount;
+            this.currentPs += amount;
+        } else {
+            Log.record(new Exception("Estadística no válida: " + stat));
+        }
     }
 //--------------------Struggle-------------------
 //    public boolean dontHavePPForAllMovement(){
@@ -253,8 +276,33 @@ public class Pokemon implements Serializable {
             }
         }
         return null;
-
     }
+    
+    /**
+     * Crea una copia del Pokémon actual
+     * @return Una nueva instancia de Pokémon con las mismas características
+     */
+    public Pokemon copy() {
+        Pokemon copy;
+        if (secondaryType != null) {
+            copy = new Pokemon(name, principalType, secondaryType);
+        } else {
+            copy = new Pokemon(name, principalType);
+        }
+        
+        copy.level = this.level;
+        copy.attack = this.attack;
+        copy.defense = this.defense;
+        copy.specialAttack = this.specialAttack;
+        copy.specialDefense = this.specialDefense;
+        copy.velocity = this.velocity;
+        copy.maxPs = this.maxPs;
+        copy.currentPs = this.currentPs;
+        
+        // Copiar los movimientos no es necesario ya que se asignarán nuevos
+        return copy;
+    }
+    
     //-------------------ToString-------------------
     @Override
     public String toString() {

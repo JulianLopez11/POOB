@@ -16,7 +16,6 @@ public class StatusEffect extends Effect{
         if (Math.random() * 100 <= probability) {
             throw new POOBkemonException(POOBkemonException.DURATION_OVER);
         }
-        //que se termine el estado
         affectPokemon.removeStatusEffect();
     }
 }

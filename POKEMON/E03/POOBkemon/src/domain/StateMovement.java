@@ -1,5 +1,7 @@
 package src.domain;
 
+import java.util.Random;
+
 public class StateMovement extends Special{
     private StatusEffect state;
     private int damageBase;
@@ -17,7 +19,8 @@ public class StateMovement extends Special{
 
     @Override
     public int doAttackTo(Pokemon attacker, Pokemon target) throws POOBkemonException{
-        if (Math.random() * 100 > precision) {
+        Random random = new Random();
+        if (random.nextInt(100) > precision) {
             throw new POOBkemonException(POOBkemonException.INVALID_MOVEMENT);
         }
         target.addEffect(state);

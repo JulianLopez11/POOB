@@ -1,6 +1,7 @@
 package src.domain;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class AttributeMovement extends Special{
     private HashMap<String,Integer> stateTo = new HashMap<>();
@@ -22,7 +23,8 @@ public class AttributeMovement extends Special{
 
     @Override
     public int doAttackTo(Pokemon attacker, Pokemon target) throws POOBkemonException{
-        if (Math.random() * 100 > precision) {
+        Random random = new Random();
+        if (random.nextInt(100) > precision) {
             throw new POOBkemonException(POOBkemonException.INVALID_MOVEMENT);
         }
         target.addEffect(state);

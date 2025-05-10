@@ -1,14 +1,14 @@
 package src.domain;
-
+import java.util.Random;
 public class Physical extends Movement{
     public Physical(String newName, String newDescription, int newPP, int newPower, int newPrecision, PokemonType newType, int newPriority){
         super(newName,newDescription,newPP,newPower,newPrecision,newType, newPriority);
     }
 
-    @Override
     public int doAttackTo(Pokemon attacker, Pokemon target) throws POOBkemonException{
+        Random random = new Random();
         if (!canUse()) throw new POOBkemonException(POOBkemonException.INVALID_MOVEMENT);
-        if (Math.random() * 100 > precision) {
+        if (random.nextInt(100) > precision) {
             losePP();
             System.out.println("Fallo");
         }
@@ -21,7 +21,7 @@ public class Physical extends Movement{
         int damageInt = (int) damage;
         target.losePS(damageInt);
         losePP();
-        return (int)damage;
+        return (int) damage;
     }
 
     @Override

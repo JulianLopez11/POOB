@@ -37,28 +37,26 @@ public class POOBkemon {
 
     public void defaultPokemons() {
         pokedex.clear();
-        Pokemon charizard = new Pokemon("Charizard", PokemonType.FUEGO, PokemonType.VOLADOR);
-        Pokemon blastoise = new Pokemon("Blastoise", PokemonType.AGUA);
-        Pokemon venusaur = new Pokemon("Venusaur", PokemonType.PLANTA, PokemonType.VENENO);
-        Pokemon raichu = new Pokemon("Raichu", PokemonType.ELECTRICO);
-        Pokemon gengar = new Pokemon("Gengar", PokemonType.FANTASMA, PokemonType.VENENO);
-        Pokemon snorlax = new Pokemon("Snorlax", PokemonType.NORMAL);
-        Pokemon delibird = new Pokemon("Delibird", PokemonType.HIELO, PokemonType.NORMAL);
-        Pokemon donphan = new Pokemon("Donphan", PokemonType.TIERRA);
-        Pokemon dragonite = new Pokemon("Dragonite", PokemonType.DRAGON, PokemonType.VOLADOR);
-        Pokemon gardevoir = new Pokemon("Gardevoir", PokemonType.PSIQUICO, PokemonType.HADA);
-        Pokemon machamp = new Pokemon("Machamp", PokemonType.LUCHA);
-        Pokemon metagross = new Pokemon("Metagross", PokemonType.PSIQUICO);
-        Pokemon togetic = new Pokemon("Togetic", PokemonType.HADA, PokemonType.VOLADOR);
-        Pokemon tyranitar = new Pokemon("Tyranitar", PokemonType.ROCA);
-        Pokemon blaziken = new Pokemon("Blaziken", PokemonType.LUCHA);
-        Pokemon golduck = new Pokemon("Golduck",PokemonType.AGUA);
-        Pokemon gyarados = new Pokemon("Gyarados",PokemonType.AGUA);
-        Pokemon hooh = new Pokemon("Ho-Oh",PokemonType.FUEGO,PokemonType.DRAGON);
-        Pokemon mrmime = new Pokemon("Mr-Mime",PokemonType.HADA);
-        Pokemon slaking = new Pokemon("Slaking",PokemonType.LUCHA);
-
-
+        Pokemon venusaur = new Pokemon("Venasur",100,364,289,328,291,328,284,PokemonType.PLANTA,PokemonType.VENENO,3);
+        Pokemon charizard = new Pokemon("Charizard",90,360,293,348,280,295,328,PokemonType.FUEGO,PokemonType.VOLADOR,6);
+        Pokemon blastoise = new Pokemon("Blastoise",100,362,291,295,328,339,280,PokemonType.AGUA,null,9);
+        Pokemon raichu = new Pokemon("Raichu",100,324,306,306,229,284,350,PokemonType.ELECTRICO,null,26);
+        Pokemon machamp = new Pokemon("Machamp",100,384,394,251,284,295,229,PokemonType.LUCHA,null,68);
+        Pokemon gengar = new Pokemon("Gengar",100,324,251,394,240,273,350,PokemonType.FANTASMA,PokemonType.VENENO,94);
+        Pokemon dragonite = new Pokemon("Dragonite",100,386,403,328,317,328,284,PokemonType.DRAGON,PokemonType.VOLADOR,149);
+        Pokemon togetic = new Pokemon("Togetic",100,314,196,284,295,339,196,PokemonType.HADA,PokemonType.VOLADOR,176);
+        Pokemon donphan = new Pokemon("Donphan",100,384,372,240,372,240,218,PokemonType.TIERRA,null,232);
+        Pokemon tyranitar = new Pokemon("Tyranitar",100,404,403,317,350,328,243,PokemonType.ROCA,PokemonType.SINIESTRO,248);
+        Pokemon snorlax = new Pokemon("Snorlax",100,524,350,251,251,350,174,PokemonType.NORMAL,null,143);
+        Pokemon delibird = new Pokemon("Delibird",100,294,229,251,207,207,273,PokemonType.HIELO,PokemonType.VOLADOR,225);
+        Pokemon gardevoir = new Pokemon("Gardevoir",100,340,251,383,251,361,284,PokemonType.PSIQUICO,PokemonType.HADA,282);
+        Pokemon metagross = new Pokemon("Metagross",100,364,404,317,394,306,262,PokemonType.ACERO,PokemonType.PSIQUICO,376);
+        Pokemon blaziken = new Pokemon("Blaziken",100,364,372,328,328,328,291,PokemonType.FUEGO,PokemonType.LUCHA,257);
+        Pokemon gyarados = new Pokemon("Gyarados",100,364,372,328,328,328,291,PokemonType.AGUA,PokemonType.VOLADOR,130);
+        Pokemon hooh = new Pokemon("Ho-oh",100,384,403,328,328,328,291,PokemonType.FUEGO,PokemonType.VOLADOR,250);
+        Pokemon mrmime = new Pokemon("Mr. Mime",100,324,251,394,240,273,350,PokemonType.PSIQUICO,PokemonType.HADA,122);
+        Pokemon slaking = new Pokemon("Slaking",100,524,350,251,251,350,174,PokemonType.NORMAL,null,289);
+        Pokemon golduck = new Pokemon("Golduck",100,364,372,328,328,328,291,PokemonType.AGUA,null,55);
 
         pokedex.put(charizard.getName(), charizard);
         pokedex.put(blastoise.getName(), blastoise);
