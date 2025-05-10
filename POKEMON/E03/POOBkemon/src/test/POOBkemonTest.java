@@ -141,7 +141,7 @@ public class POOBkemonTest {
 
     //-------------------MOVIMIENTOS-------------------
     @Test
-    public void testPhysicalAttackUsesFisicas() {
+    public void shouldBeHighDamageVsLowDefenseForPhysicalMoves() {
         int initialHP = gardevoir.getCurrentPs();
         try {
             machamp.useMovement(physicalMove, gardevoir);
@@ -157,7 +157,7 @@ public class POOBkemonTest {
     }
 
     @Test
-    public void testSpecialAttackUsesEspeciales() {
+    public void shouldBeLowDamageVsHighSpecialDefense() {
         int initialHP = gardevoir.getCurrentPs();
         try {
             machamp.useMovement(specialMove, gardevoir);
@@ -173,7 +173,7 @@ public class POOBkemonTest {
     }
 
     @Test
-    public void testCompararDanoFisicoVsEspecial() {
+    public void shouldMakeDifferentDamageWithSameConditions() {
 
         Pokemon gengar = new Pokemon("Gengar",100,324,251,394,240,273,350,PokemonType.FANTASMA,PokemonType.VENENO,94);
         Pokemon snorlax = new Pokemon("Snorlax",100,524,350,251,251,350,174,PokemonType.NORMAL,null,143);
@@ -210,7 +210,7 @@ public class POOBkemonTest {
     }
 
     @Test
-    public void testVentajaDeTipo() {
+    public void shouldWaterAttackBeGreaterThanFireAttack() {
         Pokemon charizard = new Pokemon("Charizard",90,360,293,348,280,295,328,PokemonType.FUEGO,PokemonType.VOLADOR,6);
         Pokemon blastoise = new Pokemon("Blastoise",100,362,291,295,328,339,280,PokemonType.AGUA,null,9);
 
@@ -249,7 +249,7 @@ public class POOBkemonTest {
     }
 
     @Test
-    public void testAtributosAfectanDano() {
+    public void shouldMakeMoreDamageThanAPokemonWithLowAttackStats() {
 
         Pokemon strongPhysical = machamp.copy();
         Pokemon weakPhysical = machamp.copy();
