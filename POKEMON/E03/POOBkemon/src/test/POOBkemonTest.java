@@ -107,7 +107,7 @@ public class POOBkemonTest {
         int initialHealth = pokemon1.getMaxPs();
         pokemon1.losePS(20);
         
-        assertTrue(trainer.useItem(potion, pokemon1));
+        assertTrue(trainer.useItem(pokemon1, potion));
 
         assertTrue(pokemon1.getCurrentPs() > initialHealth - 20);
     }
@@ -121,7 +121,7 @@ public class POOBkemonTest {
         pokemon1.losePS(400);
         assertTrue(pokemon1.isFainted());
         
-        assertTrue(trainer.useItem(revive, pokemon1));
+        assertTrue(trainer.useItem(pokemon1, revive));
 
         assertFalse(pokemon1.isFainted());
         assertTrue(pokemon1.getCurrentPs() > 0);
@@ -229,11 +229,11 @@ public class POOBkemonTest {
         charizard.addMovement(fireMove);
 
         try {
-            // Probar agua vs fuego (ventaja)
+            // Agua vs fuego
             int fireInitialHP = charizard.getCurrentPs();
             blastoise.useMovement(waterMove, charizard);
             int waterDamage = fireInitialHP - charizard.getCurrentPs();
-            // Probar fuego vs agua (desventaja)
+            // Fuego vs agua
             int waterInitialHP = blastoise.getCurrentPs();
             charizard.useMovement(fireMove, blastoise);
             int fireDamage = waterInitialHP - blastoise.getCurrentPs();
