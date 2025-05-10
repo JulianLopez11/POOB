@@ -13,10 +13,10 @@ public class ChangingTrainer extends MachineTrainer {
 
     @Override
     public Movement decide(Pokemon target){
-        List<Pokemon> p = inventory.getAllPokemons();
+        TreeMap<String,Pokemon> p = inventory.getPokemons();
         Pokemon pokemonActual = activePokemon;
         double possible = 0;
-        for (Pokemon pok : p){
+        for (Pokemon pok : p.values()){
             double possibleMultiplicator = pok.getMovements().get(0).getMultiplicator(target.getPrincipalType());
             if (possible < possibleMultiplicator){
                 possible = possibleMultiplicator;

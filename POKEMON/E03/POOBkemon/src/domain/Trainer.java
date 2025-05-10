@@ -77,11 +77,11 @@ public class Trainer {
      * Usa un ítem del inventario
      *
      * @param item   Ítem a usar
-     * @param target Objetivo del ítem (normalmente un Pokémon)
+     * @param pokemon   Objetivo del ítem (normalmente un Pokémon)
      * @return true si se usó correctamente, false en caso contrario
      */
-    public boolean useItem(Item item, Pokemon target) {
-        return inventory.useItem(item, target);
+    public void useItem(Pokemon pokemon , Item item) {
+        inventory.useItem(pokemon,item);
     }
 
     /**

@@ -2,7 +2,6 @@ package src.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -68,6 +67,7 @@ public class Pokemon implements Serializable {
         movements = new ArrayList<>(4);
     }
 
+    //-------------------HEAL-------------------
     /**
      * Cura al Pokémon restaurando todos sus PS
      */
@@ -84,10 +84,7 @@ public class Pokemon implements Serializable {
         currentPs = Math.min(maxPs, currentPs + amount);
     }
 
-    public boolean usedItem(){
-        return usedRevive;
-    }
-
+    //-------------------LOSE-------------------
     /**
      * Método para que el Pokémon pierda puntos de salud
      *
@@ -101,29 +98,8 @@ public class Pokemon implements Serializable {
         }
     }
 
-    public boolean addMovement(Movement movement) {
-        HashSet<Movement> movementsDontValid = new HashSet<>(movementsWeaks());
-        if (movements.contains(movement)) {
-            return false;
-        }
-        movements.add(movement);
-        return true;
-    }
 
-    public void setMovements( Movement[] newMovements){
-        ArrayList<Movement> list = new ArrayList<>();
-        for (Movement m : newMovements){
-            try {
-                if (!movements.contains(m)) {
-                    list.add(m);
-                }
-            } catch(Exception e){
-                Log.record(e);
-            }
-        }
-        movements = list;
-    }
-
+    //-------------------ADDERS-------------------
     public void addEffect(StatusEffect effect){
         statusEffect = effect;
     }
@@ -132,12 +108,22 @@ public class Pokemon implements Serializable {
         attributeEffects.add(effect);
     }
 
-    public void useMovement(Movement movimiento, Pokemon target) {
-        movimiento.doAttackTo(this, target);
+    public boolean addMovement(Movement movement) {
+        HashSet<Movement> movementsDontValid = new HashSet<>(movementsWeaks());
+        if (movements.contains(movement)) {
+            return false;
+        }
+        movements.add(movement);
+        return true;
     }
-
+    //-------------------REMOVER-------------------
     public void removeStatusEffect(){
         statusEffect = null;
+    }
+
+    //-------------------USER-------------------
+    public void useMovement(Movement movimiento, Pokemon target) {
+        movimiento.doAttackTo(this, target);
     }
 
     /**
@@ -176,43 +162,8 @@ public class Pokemon implements Serializable {
 //    public void actionF(Pokemon target){
 //        struggle.AttackToStruggle(this,target);
 //    }
-    //-------------------Aleatory-------------------
-    public ArrayList<Movement> movementsUsables(){
-        ArrayList<Movement> temp = new ArrayList<>();
-        for(Movement m: movements){
-            if (m.canUse()){
-                temp.add(m);
-            }
-        }
-        return temp;
-    }
 
-    /**
-     * Selecciona un movimiento aleatorio del Pokémon
-     *
-     * @param target Pokémon objetivo del ataque
-     * @return Movimiento aleatorio
-     */
-    public Movement aleatoryMovement(Pokemon target){
-        ArrayList<Movement> temp = movementsUsables();
-        Random random = new Random();
-        int ramdomNum = random.nextInt(temp.size());
-        Movement aleatoryMovement = temp.get(ramdomNum);
-        return aleatoryMovement;
-    }
-
-    //-------------------Weaks-------------------
-    public ArrayList<Movement> movementsWeaks(){
-        ArrayList<Movement> movementsWeak = new ArrayList<>();
-        for (int i = 0; i < movements.size(); i++){
-            if (movements.get(i).getMultiplicator(principalType) > 1.0){
-                movementsWeak.add(movements.get(i));
-            }
-        }
-        return movementsWeak;
-    }
-
-    //-------------------Getters y Setters-------------------
+    //-------------------Getters-------------------
     public int getPs(){
         return currentPs;
     }
@@ -264,9 +215,37 @@ public class Pokemon implements Serializable {
         return movements;
     }
 
-    public boolean isFainted() {
-        isAlive = false;
-        return currentPs <= 0;
+    public ArrayList<AttributeMovement> getMovementsGiveAttack() {
+        ArrayList<AttributeMovement> stateMovements = gettTributeMovements();
+        ArrayList<AttributeMovement> attackGivers = new ArrayList<>();
+        for (AttributeMovement stateMov : stateMovements) {
+            if (stateMov.getStateTo().containsKey("Attack")) {
+                attackGivers.add((AttributeMovement) stateMov);
+            }
+        }
+        return attackGivers;
+    }
+
+    public ArrayList<AttributeMovement> getMovementsGiveDefense() {
+        ArrayList<AttributeMovement> stateMovements = gettTributeMovements();
+        ArrayList<AttributeMovement> deffenseGivers = new ArrayList<>();
+
+        for (AttributeMovement stateMov : stateMovements) {
+            if (stateMov.getStateTo().containsKey("Defense")) {
+                deffenseGivers.add(stateMov);
+            }
+        }
+        return deffenseGivers;
+    }
+
+    public ArrayList<AttributeMovement> gettTributeMovements() {
+        ArrayList<AttributeMovement> tributeMovements = new ArrayList<>();
+        for (Movement movement : movements) {
+            if (movement instanceof AttributeMovement) {
+                tributeMovements.add((AttributeMovement) movement);
+            }
+        }
+        return tributeMovements;
     }
 
     public Movement getMovement(Movement movement){
@@ -277,7 +256,66 @@ public class Pokemon implements Serializable {
         }
         return null;
     }
-    
+
+    public ArrayList<Movement> movementsWeaks(){
+        ArrayList<Movement> movementsWeak = new ArrayList<>();
+        for (int i = 0; i < movements.size(); i++){
+            if (movements.get(i).getMultiplicator(principalType) > 1.0){
+                movementsWeak.add(movements.get(i));
+            }
+        }
+        return movementsWeak;
+    }
+
+    /**
+     * Selecciona un movimiento aleatorio del Pokémon
+     *
+     * @param target Pokémon objetivo del ataque
+     * @return Movimiento aleatorio
+     */
+    public Movement aleatoryMovement(Pokemon target){
+        ArrayList<Movement> temp = movementsUsables();
+        Random random = new Random();
+        int ramdomNum = random.nextInt(temp.size());
+        Movement aleatoryMovement = temp.get(ramdomNum);
+        return aleatoryMovement;
+    }
+
+    public ArrayList<Movement> movementsUsables(){
+        ArrayList<Movement> temp = new ArrayList<>();
+        for(Movement m: movements){
+            if (m.canUse()){
+                temp.add(m);
+            }
+        }
+        return temp;
+    }
+
+    public void setMovements( Movement[] newMovements){
+        ArrayList<Movement> list = new ArrayList<>();
+        for (Movement m : newMovements){
+            try {
+                if (!movements.contains(m)) {
+                    list.add(m);
+                }
+            } catch(Exception e){
+                Log.record(e);
+            }
+        }
+        movements = list;
+    }
+
+    //-------------------BOOLEAN-------------------
+    public boolean isFainted() {
+        isAlive = false;
+        return currentPs <= 0;
+    }
+
+    public boolean usedItem(){
+        return usedRevive;
+    }
+
+    //-----------------------------------------------
     /**
      * Crea una copia del Pokémon actual
      * @return Una nueva instancia de Pokémon con las mismas características
